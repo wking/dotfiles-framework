@@ -199,7 +199,6 @@ for file in _*; do
 	    fi
 	fi
     else
-	echo "no ~/$dotfile" 
 	if [ $OVERRIDDEN == "no" ]; then
 	    ADDED="$ADDED ~/$dotfile"
 	fi
