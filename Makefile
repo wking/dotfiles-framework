@@ -27,7 +27,7 @@ merge:
 	./merge.sh
 
 override:
-	./fixup -f
+	./fixup.sh -f
 
 localdiff:
 	./diff.sh
