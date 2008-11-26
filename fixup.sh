@@ -162,7 +162,7 @@ NOT_CHANGED=""
 UPDATED=""
 ADDED=""
 
-# For each file in this directory.
+# For each dotfile in this directory.
 for file in _*; do
     # Create .dotfile version.
     dotfile=.${file/_/}

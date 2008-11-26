@@ -157,6 +157,7 @@ if [ -z "$SSH_CLIENT" ]; then
     fi
 fi
 
+### ---- begin .dotfiles section ---- (keep this magic comment)
 
 # Check for Git (versioning system) so we know how to get our .dotfiles
 GIT_PATH=`which git`
@@ -196,3 +197,5 @@ if [ -d ~/.dotfiles/ ]; then
         popd
     fi
 fi
+
+### ---- end .dotfiles section ---- (keep this magic comment)

@@ -38,3 +38,7 @@ localdiff:
 # i.e. What specialization do I want compared to the central .dotfiles
 localpatch:
 	./diff.sh > local.patch
+
+# No Remove this computer from the auto-updates list
+disconnect:
+	./disconnect.sh
