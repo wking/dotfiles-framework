@@ -129,7 +129,7 @@ export EDITOR="/usr/bin/emacs -nw"
 export PAGER="less"
 
 # personalize path
-export PATH=/home/wking/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/script:~/script/python:~/script/lab:~/bin
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:$HOME/script:$HOME/script/python:$HOME/script/lab:$HOME/bin
 export LD_LIBRARY_PATH=~/lib
 
 # personalize latex path
