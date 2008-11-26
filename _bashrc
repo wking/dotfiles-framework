@@ -156,3 +156,38 @@ if [ -z "$SSH_CLIENT" ]; then
 	setterm -blength 0
     fi
 fi
+
+
+# Check for Git (versioning system) so we know how to get our .dotfiles
+GIT_PATH=`which git`
+if [ -n "GIT_PATH" ];then
+   GIT_INSTALLED="true"
+else
+   GIT_INSTALLED="false"
+fi
+
+# If we don't have checked out copies of our dotfiles, get them
+if [ ! -d ~/.dotfiles/ ]; then
+    if [ $GIT_INSTALLED == "true" ]; then
+        git clone http://einstein.physics.drexel.edu/~wking/code/git/dotfiles.git ~/.dotfiles
+    else
+        # fallback on wgetting the tarball
+        pushd ~
+	wget http://einstein.physics.drexel.edu/~wking/code/tar/dotfiles.tgz
+	tar -xzvf dotfiles.tgz
+	rm -rf dotfiles.tgz
+	popd
+    fi
+fi
+
+# If we have checked out copies of our dotfiles (i.e. clone successful)
+if [ -d ~/.dotfiles/ ]; then
+    # Update once a week from our remote repository.
+    if [ ! -e ~/.dotfiles/updated.`date +%U` ]; then
+        rm -f ~/.dotfiles/updated.* 2>/dev/null
+        touch ~/.dotfiles/updated.`date +%U`
+        pushd ~/.dotfiles
+        make update
+        popd
+    fi
+fi

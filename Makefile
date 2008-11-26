@@ -21,7 +21,7 @@ fixup:
 	./fixup.sh
 
 update:
-	git pull
+	./update.sh
 
 merge:
 	./merge.sh
