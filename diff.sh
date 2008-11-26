@@ -3,7 +3,7 @@
 # Print diffs for each _FILE / ~/.FILE pair
 
 
-# Create the diff between a pair of files
+# Show the changes we'd apply on installation
 #
 # handleFile( $file, $dotfile )
 #
@@ -12,7 +12,7 @@
 # dotfile - The file it should be linked to in ~/, e.g. '.foo'
 function handleFile( )
 {
-    diff -ru $1 $2
+    diff -ru $2 $1
 }
 
 # See if we can find any _files.
