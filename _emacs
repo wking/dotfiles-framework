@@ -34,6 +34,13 @@
 (setq backup-directory-alist (quote ((".*" . "~/.backup"))))
 (defconst use-backup-dir t)	    ; Use backup directory
 
+; From http://www.delorie.com/gnu/docs/emacs/emacs_125.html
+; Emacs records interrupted sessions for later recovery in files named
+; `~/.emacs.d/auto-save-list/.saves-pid-hostname'. The
+; `~/.emacs.d/auto-save-list/.saves-' portion of these names comes
+; from the value of auto-save-list-file-prefix.
+(setq auto-save-list-file-prefix "~/.auto-save-list/.saves-")
+
 ; redefining the make-auto-save-file-name function in order to get
 ; autosave files sent to a single directory.  Note that this function
 ; looks first to determine if you have a ~/.autosave/ directory.  If
