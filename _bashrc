@@ -168,12 +168,17 @@ fi
 
 # If we don't have checked out copies of our dotfiles, get them
 if [ ! -d ~/.dotfiles/ ]; then
+    http="http://einstein.physics.drexel.edu/~wking/code/git/dotfiles.git"
+    ssh="http://einstein.physics.drexel.edu/~wking/code/git/dotfiles.git"
+    tgz="http://einstein.physics.drexel.edu/~wking/code/tar/dotfiles.tgz"
     if [ $GIT_INSTALLED == "true" ]; then
-        git clone http://einstein.physics.drexel.edu/~wking/code/git/dotfiles.git ~/.dotfiles
+        git clone $http ~/.dotfiles
+        # setup to use ssh by default.
+        sed -i "s/$http/$ssh/" ~/.dotfiles/.git/config
     else
         # fallback on wgetting the tarball
         pushd ~
-	wget http://einstein.physics.drexel.edu/~wking/code/tar/dotfiles.tgz
+	wget --output-document dotfiles.tgz $tgz
 	tar -xzvf dotfiles.tgz
 	rm -rf dotfiles.tgz
 	popd
