@@ -84,7 +84,7 @@ alias less='less -R'
 alias lp='/usr/bin/lp -o sides=two-sided-long-edge -o media=letter -o cpi=16 -o lpi=10'
 alias lpb='/usr/bin/lp -o sides=two-sided-long-edge -o media=letter -o cpi=12 -o lpi=6'
 alias lpi='/usr/bin/lp -o fitplot'
-alias emacs='emacs'
+alias emacs='emacs -nw'
 alias xterm='xterm -fg white -bg black'
 alias w3mg='w3m http://www.google.com'
 alias calendar='calendar -A28'
@@ -125,7 +125,7 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 # define default programs
-export EDITOR="emacs -nw"
+export EDITOR="/usr/bin/emacs -nw"
 export PAGER="less"
 
 # personalize path
