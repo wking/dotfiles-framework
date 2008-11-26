@@ -1,0 +1,21 @@
+# .screenrc startup file for GNU Screen
+
+
+# don't show the startup splash screen
+startup_message off
+
+# we're not graphical
+unsetenv DISPLAY
+
+# automatically detach on hangup.
+autodetach on
+
+# These keybindings always annoy me (and Steve :p): xon/xoff.
+# Remove them.
+bind ^Q
+bind q
+bind ^S
+bind s 
+
+# If a window goes unresponsive, don't block the whole session waiting for it.
+nonblock on

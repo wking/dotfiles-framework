@@ -1,0 +1,76 @@
+! .xmodmap bind X characters to keys
+! Following http://www.in-ulm.de/~mascheck/X11/input8bit.html
+!
+keycode 113 = Mode_switch
+clear mod3
+add mod3 = Mode_switch
+
+! U208N is subscript N
+keycode  10 = 1 exclam U2081 onehalf
+keycode  11 = 2 at U2082 twosuperior
+keycode  12 = 3 numbersign U2083 threesuperior
+keycode  13 = 4 dollar U2084 foursuperior
+keycode  14 = 5 percent
+! U207B is superscript minus
+! U00B9 is superscript one
+keycode  15 = 6 asciicircum U207B U00B9
+keycode  16 = 7 ampersand
+! U2219 is the bullet operator
+keycode  17 = 8 asterisk infinity U2219
+! U2248 is almost equal (asymptotic)
+keycode  18 = 9 parenleft U2248
+keycode  19 = 0 parenright emptyset
+! U2213 is minus-or-plus
+keycode  20 = minus underscore notsign U2213
+keycode  21 = equal plus notequal plusminus
+! U221A is the square root sign (radical)
+! U211A is the set of all rationals
+keycode  24 = q Q radical U211A
+! U1E84 is LATIN CAPITAL LETTER W WITH DIAERESIS
+keycode  25 = w W Greek_omega U1E84
+! U2203 is there exists
+keycode  26 = e E Greek_epsilon U2203
+! U211D is the set of reals numbers
+keycode  27 = r R Greek_rho U211D
+keycode  28 = t T Greek_tau Greek_theta
+keycode  29 = y Y Greek_psi Greek_PSI
+keycode  30 = u U Greek_eta
+! U222C is a double integral
+keycode  31 = i I integral U222C
+keycode  32 = o O elementof Greek_OMEGA
+keycode  33 = p P Greek_pi Greek_PI
+keycode  34 = bracketleft braceleft leftsinglequotemark leftdoublequotemark
+keycode  35 = bracketright braceright rightsinglequotemark rightdoublequotemark
+! U2200 is for all
+keycode  38 = a A Greek_alpha U2200
+keycode  39 = s S Greek_sigma Greek_SIGMA
+! U2202 is partial differential
+! (for some reason the keysym partialderivative wasn't working on my eeepc).
+keycode  40 = d D U2202 Greek_delta
+keycode  41 = f F function Greek_phi
+keycode  42 = g G Greek_gamma Greek_GAMMA
+keycode  43 = h H degree
+keycode  44 = j J
+keycode  45 = k K Greek_kappa
+keycode  46 = l L Greek_lambda
+! U2026 is an ellipsis
+keycode  47 = semicolon colon U2026
+keycode  48 = apostrophe quotedbl
+! U223C is the tilde operator
+keycode  49 = grave asciitilde U223C approximate
+keycode  50 = Shift_L
+! U2261 is identical to (three-bar equals)
+keycode  51 = backslash bar U2261
+! U2115 is the set of all natural numbers, U2124 is the set of integers
+keycode  52 = z Z U2115 U2124
+keycode  53 = x X Greek_chi Greek_xi
+keycode  54 = c C Greek_chi
+keycode  55 = v V Greek_nu
+keycode  56 = b B Greek_beta
+keycode  57 = n N Greek_DELTA nabla
+keycode  58 = m M mu
+! includedin = 'subset of'
+! includes = 'superset of'
+keycode  59 = comma less includedin guillemotleft
+keycode  60 = period greater includes guillemotright
+keycode  61 = slash question rightarrow questiondown

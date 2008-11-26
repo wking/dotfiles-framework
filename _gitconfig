@@ -1,0 +1,5 @@
+# .gitconfig a Git configuration file
+
+[user]
+        name = W. Trevor King
+        email = wking@drexel.edu

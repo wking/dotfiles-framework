@@ -1,0 +1,3 @@
+# .hgrc a Mercurial configuration file
+[ui]
+username = W. Trevor King <wking@drexel.edu>
