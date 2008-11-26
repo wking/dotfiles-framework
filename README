@@ -1,0 +1,44 @@
+This package provides automatic synchronization of assorted dotfiles,
+simplifying the maintnance of a uniform configuration across several
+hosts.
+
+The basic implentation was by Steve Kemp at
+  http://dotfiles.repository.steve.org.uk
+
+To install it, simple replace your ~/.bashrc file with mine (or at
+least replace the portions dealing with ~.dotfiles).  Whenever you
+open a bash shell, that code will check for the existence of a
+~/.dotfiles directory, and if necessary, download it from my public
+repository (ideally using git, but it falls back on wgetting a
+tarball).  It then creates simlinks to any dotfiles that you had been
+missing automatically.
+
+After installation, the code in your .bashrc file will check for
+weekly updates at the central server.  Any updates to the files that
+it controls (i.e. dotfiles symlinked into ~/.dotfiles/_XXX) will be
+applied automatically.
+
+In order to increase your local installation's similarity with the
+central server, take a look at the differences between your installed
+dotfiles and those in ~/.dotfile with
+  cd ~/.dotfiles
+  make localdiff | less
+If you see a few places where you like your local version better, make
+a patch, and save the hunks in (see *making local.patch* below)
+  ~/.dotfiles/local.patch
+You can do a dry run of any update with
+  cd ~/.dotfiles && ./fixup.sh --dry-run
+or overide with
+  cd ~/.dotfiles && ./fixup.sh --dry-run --force
+Then put .dotfiles in control with
+  make override
+which will replace all your local dotfiles with their .dotfiles version
+and then patch them as you specified in local.patch.
+
+
+Making local.patch
+
+Set up your installed dotfiles as you want them to be.  (TODO: helper
+script for partial, interactive merges of the central version.)  Then
+just
+    make localpatch
