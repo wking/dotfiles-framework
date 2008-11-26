@@ -1,7 +1,24 @@
 #!/bin/bash
 #
-# Print diffs for each _FILE / ~/.FILE pair
+# Print diffs for each _FILE, ~/.FILE pair
+#
+# There are two modes, local and standard. In standard mode, we show the
+# transition ~/.file -> _file, which shows the changes effected by
+# `make override`.  In local mode we show the transition _file -> ~/.file,
+# which shows the changes we need to apply to the .dotfiles to create
+# your current local installation.  The --local option selects local mode.
 
+LOCAL="no" # Select diff ordering
+
+# parse options
+while [ -n "$1" ]; do
+    case "$1" in
+	"--local")
+	LOCAL="yes"
+	;;
+    esac
+    shift
+done
 
 # Show the changes we'd apply on installation
 #
@@ -12,7 +29,11 @@
 # dotfile - The file it should be linked to in ~/, e.g. '.foo'
 function handleFile( )
 {
-    diff -ru $2 $1
+    if [ $LOCAL == "yes" ]; then
+	diff -ru $2 $1
+    else
+	diff -ru $1 $2
+    fi
 }
 
 # See if we can find any _files.

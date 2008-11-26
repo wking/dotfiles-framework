@@ -27,7 +27,14 @@ merge:
 	./merge.sh
 
 override:
-	./fixup.sh -f
+	./fixup.sh --force
 
+# Print a diff between the local installation and .dotfiles
+# i.e. What changes will `make override' effect
 localdiff:
-	./diff.sh
+	./diff.sh --local
+
+# Save a diff between .dotfiles and the local installation
+# i.e. What specialization do I want compared to the central .dotfiles
+localpatch:
+	./diff.sh > local.patch
