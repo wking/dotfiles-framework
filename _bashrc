@@ -160,7 +160,7 @@ fi
 
 # Check for Git (versioning system) so we know how to get our .dotfiles
 GIT_PATH=`which git`
-if [ -n "GIT_PATH" ];then
+if [ -n "$GIT_PATH" ];then
    GIT_INSTALLED="true"
 else
    GIT_INSTALLED="false"
