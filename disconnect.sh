@@ -20,13 +20,13 @@ for file in _*; do
     
     # Replace symlinks with their target
     if [ -h ~/$dotfile ]; then
-	echo -n ""
-	#rm -f ~/$dotfile
-	#mv $file ~/$dotfile
+	echo "De-symlink ~/$dotfile"
+	rm -f ~/$dotfile
+	mv $file ~/$dotfile
     fi
 done
 
-if [ $BASH_RC == "yes" ]; then
+if [ $BASHRC == "yes" ]; then
     # We may have a dotfiles section in ~/.bashrc.  Strip it out.
     BC="### ---- begin .dotfiles section ---- (keep this magic comment)"
     EC="### ---- end .dotfiles section ---- (keep this magic comment)"
@@ -36,12 +36,22 @@ if [ $BASH_RC == "yes" ]; then
     AWKSCRIPT="$AWKSCRIPT if(copy==1 && \$0 != \"$EC\"){print \$0}"
     AWKSCRIPT="$AWKSCRIPT}"
     
+    echo "Strip dotfiles section from ~/.bashrc"
     awk "$AWKSCRIPT" ~/.bashrc > bashrc_stripped
     
     # see if the stripped file is any different
-    DIFF=`diff ~/.bashrc bashrc_stripped` || exit 1
+    DIFF=`diff ~/.bashrc bashrc_stripped`
+    if [ $? -ne 1 ]; then exit 1; fi   # diff failed, bail
     if [ -n "$DIFF" ]; then
+	echo "Replace ~/.bashrc with stripped version"
 	rm -f ~/.bashrc
 	cp bashrc_stripped ~/.bashrc
+    else
+	echo "No dotfiles section in ~/.bashrc"
     fi
 fi
+
+DOTFILES_DIR=`pwd`
+cd
+echo "Remove the dotfiles dir $DOTFILES_DIR"
+rm -rf $DOTFILES_DIR
