@@ -192,7 +192,7 @@ if [ -d ~/.dotfiles/ ]; then
         rm -f ~/.dotfiles/updated.* 2>/dev/null
         touch ~/.dotfiles/updated.`date +%U`
         pushd ~/.dotfiles
-        make update
+        make fixup
         popd
     fi
 fi

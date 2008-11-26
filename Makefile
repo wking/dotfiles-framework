@@ -17,7 +17,7 @@ clean:
 diff:
 	git diff
 
-fixup:
+fixup: update
 	./fixup.sh
 
 update:
