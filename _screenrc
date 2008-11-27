@@ -1,4 +1,17 @@
 # .screenrc startup file for GNU Screen
+#
+# note,
+#   screen -x <identifier>
+# will attatch you to a screen without detaching other clients, creating a
+# multi-user session.  You can detach a single client from this session like
+# you normally would with '^a d'.  However, if you ran 'screen -x ...' *from*
+# another screen, the '^a d' will detach your *original* screen.  You can pass
+# escaped commands on to deeper levels of screens with '^a a', which sends an
+# '^a' to the process running inside your top level screen.  So '^a a d' will
+# detach you from the multi-user screen running inside your base screen :p.
+#
+# there is a nice introduction by Chris Lumens, at
+#   http://www.bangmoney.org/presentations/screen.html
 
 
 # don't show the startup splash screen
