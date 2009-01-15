@@ -91,6 +91,7 @@ alias calendar='calendar -A28'
 alias acroread='acroread -geometry 1270x950'
 alias graph='graph -TX -C'
 alias snownews='snownews -u'
+alias oggr='ogg123 -qb 500' # play ogg radio streams (quiet, big input buffer)
 
 # Alias useful one-liners & common commands
 alias findex='find . -perm -u+x ! -type d'
