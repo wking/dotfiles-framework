@@ -14,7 +14,8 @@ keycode  14 = 5 percent
 ! U207B is superscript minus
 ! U00B9 is superscript one
 keycode  15 = 6 asciicircum U207B U00B9
-keycode  16 = 7 ampersand
+! U2080 us subscript zero
+keycode  16 = 7 ampersand U2080
 ! U2219 is the bullet operator
 keycode  17 = 8 asterisk infinity U2219
 ! U2248 is almost equal (asymptotic)
