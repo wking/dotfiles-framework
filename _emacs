@@ -24,7 +24,7 @@
 ; Set up a more organized version control
 ;
 ; Backups are saved to ~/.backup, and autosaves to ~/.autosave If
-; ~/.backup doesn't exist it is created.  If ~/.autosace doesn't exist
+; ~/.backup doesn't exist it is created.  If ~/.autosave doesn't exist
 ; it is created, the standard autosave procedure is followed.
 ;
 ; following J.T. Halbert at http://www.math.umd.edu/~halbert/dotemacs.html
