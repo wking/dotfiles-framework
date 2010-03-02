@@ -130,14 +130,14 @@ export EDITOR="/usr/bin/emacs -nw"
 export PAGER="less"
 
 # personalize path
-export PATH=:$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+export PATH=$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 export LD_LIBRARY_PATH=~/lib
 
 # personalize latex path
 export TEXINPUTS=":.:$HOME/projects/latex/common/"
 
 # personalize python path
-export PYTHONPATH=":.:$HOME/lib/python:$HOME/lib/python2.5/site-packages:$HOME/.python"
+export PYTHONPATH=".:$HOME/lib/python:$HOME/lib/python2.5/site-packages:$HOME/.python"
 
 # append personal manpages to manpath
 export MANPATH=":$HOME/share/man"
