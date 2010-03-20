@@ -52,9 +52,12 @@ keycode  40 = d D U2202 Greek_delta
 keycode  41 = f F function Greek_phi
 keycode  42 = g G Greek_gamma Greek_GAMMA
 keycode  43 = h H degree
-keycode  44 = j J
-keycode  45 = k K Greek_kappa
-keycode  46 = l L Greek_lambda
+! U062A is Arabic "teh", looks like a smiley face :)
+keycode  44 = j J j U062A
+! U062A is Arabic "teh with ring", looks like a goofey face :p
+keycode  45 = k K Greek_kappa U067C
+! U0629 is Arabic "teh marbuta", looks like a supprised face :o
+keycode  46 = l L Greek_lambda U0629
 ! U2026 is an ellipsis
 keycode  47 = semicolon colon U2026
 keycode  48 = apostrophe quotedbl
