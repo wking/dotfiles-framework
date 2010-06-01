@@ -6,7 +6,20 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
-# If not running interactively, don't do anything
+# personalize path
+export PATH=$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+export LD_LIBRARY_PATH=~/lib
+
+# personalize latex path
+export TEXINPUTS=":.:$HOME/projects/latex/common/"
+
+# personalize python path
+export PYTHONPATH=".:$HOME/lib/python:$HOME/lib/python2.5/site-packages:$HOME/.python"
+
+# append personal manpages to manpath
+export MANPATH=":$HOME/share/man"
+
+# If not running interactively, don't do anything else
 [ -z "$PS1" ] && return
 
 # don't put duplicate line in the history and ignore lines starting
@@ -128,19 +141,6 @@ fi
 # define default programs
 export EDITOR="/usr/bin/emacs -nw"
 export PAGER="less"
-
-# personalize path
-export PATH=$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
-export LD_LIBRARY_PATH=~/lib
-
-# personalize latex path
-export TEXINPUTS=":.:$HOME/projects/latex/common/"
-
-# personalize python path
-export PYTHONPATH=".:$HOME/lib/python:$HOME/lib/python2.5/site-packages:$HOME/.python"
-
-# append personal manpages to manpath
-export MANPATH=":$HOME/share/man"
 
 # colorize file listings (di was 34 (blue), swapped with 33 (yellow))
 export LS_COLORS='no=00:fi=00:di=00;33:ln=00;36:pi=40;34:so=00;35:bd=40;34;01:cd=40;34;01:or=01;05;37;41:mi=01;05;37;41:ex=00;32:*.cmd=00;32:*.exe=00;32:*.com=00;32:*.btm=00;32:*.bat=00;32:*.sh=00;32:*.csh=00;32:*.tar=00;31:*.tgz=00;31:*.arj=00;31:*.taz=00;31:*.lzh=00;31:*.zip=00;31:*.z=00;31:*.Z=00;31:*.gz=00;31:*.bz2=00;31:*.bz=00;31:*.tz=00;31:*.rpm=00;31:*.cpio=00;31:*.jpg=00;35:*.gif=00;35:*.bmp=00;35:*.xbm=00;35:*.xpm=00;35:*.png=00;35:*.tif=00;35:'
