@@ -17,17 +17,19 @@ clean:
 diff:
 	git diff
 
+# Link each _FILE in the current directory to ~/.FILE
 fixup: update
 	./fixup.sh
 
-update:
-	./update.sh
-
-merge:
-	./merge.sh
-
+# By default, fixup only replaces missing files and simlinks.  You can
+# optionally overwrite any local files and directories by passing the
+# --force option.
 override:
 	./fixup.sh --force
+
+# Get the current dotfiles from the server using a variety of methods.
+update:
+	./update.sh
 
 # Print a diff between the local installation and .dotfiles
 # i.e. What changes will `make override' effect
