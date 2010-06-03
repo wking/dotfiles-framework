@@ -3,4 +3,6 @@
 username = W. Trevor King <wking@drexel.edu>
 
 [extensions]
+hgext.convert=
+hgext.graphlog=
 hgext.purge=
