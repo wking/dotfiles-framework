@@ -7,7 +7,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # personalize path
-export PATH=$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+export PATH=$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:$HOME/lib/ruby/gems/1.8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 export LD_LIBRARY_PATH=~/lib
 
 # personalize latex path
@@ -19,6 +19,13 @@ export PYTHONPATH=".:$HOME/lib/python:$HOME/lib/python$PYTHON_VERSION/site-packa
 
 # append personal manpages to manpath
 export MANPATH=":$HOME/share/man"
+
+# personalize ruby and rubygems paths
+# from http://docs.rubygems.org/read/chapter/15
+PREFIX=$HOME
+export GEM_HOME=$PREFIX/lib/ruby/gems/1.8
+export RUBYLIB=$PREFIX/lib/ruby:$PREFIX/lib/site_ruby/1.8
+
 
 # If not running interactively, don't do anything else
 [ -z "$PS1" ] && return
