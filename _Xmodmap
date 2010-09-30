@@ -1,11 +1,12 @@
 ! .xmodmap bind X characters to keys
 ! Following http://www.in-ulm.de/~mascheck/X11/input8bit.html
-!
+! get keycodes with xev
+
 keycode 113 = Mode_switch
 clear mod3
 add mod3 = Mode_switch
 
-! U208N is subscript N
+! U208* is subscript *
 keycode  10 = 1 exclam U2081 onehalf
 keycode  11 = 2 at U2082 twosuperior
 keycode  12 = 3 numbersign U2083 threesuperior
@@ -15,7 +16,7 @@ keycode  14 = 5 percent
 ! U00B9 is superscript one
 keycode  15 = 6 asciicircum U207B U00B9
 ! U2080 is subscript zero
-! U2070 us superscript zero
+! U2070 is superscript zerp
 keycode  16 = 7 ampersand U2080 U2070
 ! U2219 is the bullet operator
 keycode  17 = 8 asterisk infinity U2219
@@ -43,7 +44,7 @@ keycode  30 = u U Greek_eta
 ! U222C is a double integral
 keycode  31 = i I integral U222C
 ! U2126 is the ohm sign (different codepoint from Omega (U03A9))
-keycode  32 = o O elementof U@126
+keycode  32 = o O elementof U2126
 ! U220F is the n-ary product (different codepoint from Pi (U03A0))
 keycode  33 = p P Greek_pi U220F
 keycode  34 = bracketleft braceleft leftsinglequotemark leftdoublequotemark
@@ -63,7 +64,7 @@ keycode  43 = h H degree U2103
 keycode  44 = j J j U062A
 ! U062A is Arabic "teh with ring", looks like a goofey face :p
 keycode  45 = k K Greek_kappa U067C
-! U0629 is Arabic "teh marbuta", looks like a supprised face :o
+! U0629 is Arabic "teh marbuta", looks like a surprised face :o
 keycode  46 = l L Greek_lambda U0629
 ! U2026 is an ellipsis
 keycode  47 = semicolon colon U2026
@@ -79,15 +80,15 @@ keycode  53 = x X Greek_chi Greek_xi
 keycode  54 = c C Greek_chi
 keycode  55 = v V Greek_nu
 keycode  56 = b B Greek_beta
-!
 keycode  57 = n N Greek_DELTA nabla
-! U00B5 is the micro sign (similar to mu, but different codepoint)
-keycode  58 = m M mu U00B5
+! U00B5 is the micro sign (different codepoint from mu (U03BC))
+! U2014 is the em-dash (parenthetical seperator)
+keycode  58 = m M U00B5 U2014
+! gullemotleft
 ! includedin = 'subset of'
 ! includes = 'superset of'
-! 
 ! U2131 is the Fourier transform
 ! U2112 is the Laplace transform
 keycode  59 = comma less U2131 U2112
-keycode  60 = period greater includes
+keycode  60 = period greater includes guillemotright
 keycode  61 = slash question rightarrow questiondown
