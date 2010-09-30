@@ -20,6 +20,9 @@ export PYTHONPATH=".:$HOME/lib/python:$HOME/lib/python$PYTHON_VERSION/site-packa
 # append personal manpages to manpath
 export MANPATH=":$HOME/share/man"
 
+# personalize Java path (found by tracing from `which javac`)
+export JAVA_HOME=/usr/lib/jvm/java-6-openjdk/
+
 # personalize ruby and rubygems paths
 # from http://docs.rubygems.org/read/chapter/15
 PREFIX=$HOME
