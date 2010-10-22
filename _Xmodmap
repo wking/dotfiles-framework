@@ -2,7 +2,7 @@
 ! Following http://www.in-ulm.de/~mascheck/X11/input8bit.html
 ! get keycodes with xev
 
-keycode 113 = Mode_switch
+keycode 108 = Mode_switch
 clear mod3
 add mod3 = Mode_switch
 
