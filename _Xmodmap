@@ -84,11 +84,13 @@ keycode  57 = n N Greek_DELTA nabla
 ! U00B5 is the micro sign (different codepoint from mu (U03BC))
 ! U2014 is the em-dash (parenthetical seperator)
 keycode  58 = m M U00B5 U2014
-! gullemotleft
+! guillemotleft
 ! includedin = 'subset of'
 ! includes = 'superset of'
 ! U2131 is the Fourier transform
 ! U2112 is the Laplace transform
 keycode  59 = comma less U2131 U2112
-keycode  60 = period greater includes guillemotright
+! guillemotright
+! U22C5 is the dot operator
+keycode  60 = period greater includes U22C5
 keycode  61 = slash question rightarrow questiondown
