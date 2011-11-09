@@ -7,7 +7,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # personalize path
-export PATH=$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:$HOME/lib/ruby/gems/1.8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+export PATH=$HOME/bin:$HOME/script:$HOME/script/python:$HOME/script/lab:$HOME/lib/ruby/gems/1.8/bin:$HOME/.cabal/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 export LD_LIBRARY_PATH=~/lib
 
 # personalize latex path
