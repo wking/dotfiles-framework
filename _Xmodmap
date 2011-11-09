@@ -92,5 +92,7 @@ keycode  58 = m M U00B5 U2014
 keycode  59 = comma less U2131 U2112
 ! guillemotright
 ! U22C5 is the dot operator
+! U27E8 is the mathematical left angle bracket (bra)
+! U27E9 is the mathematical right angle bracket (ket)
 keycode  60 = period greater includes U22C5
 keycode  61 = slash question rightarrow questiondown
