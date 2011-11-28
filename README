@@ -1,5 +1,5 @@
 This package provides automatic synchronization of assorted dotfiles,
-simplifying the maintnance of a uniform configuration across several
+simplifying the maintenance of a uniform configuration across several
 hosts.
 
 The basic implentation was by Steve Kemp at
