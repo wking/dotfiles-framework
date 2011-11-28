@@ -18,6 +18,7 @@ fi
 #exec screen -R # automatically attach to first detached session if it exists
 
 # print my calendar if I've configured it
-if [ -e ~/.calendar ]; then
+# http://bsdcalendar.sourceforge.net/  (Gentoo: app-misc/calendar)
+if [ -f ~/.calendar/calendar ]; then
     calendar
 fi
