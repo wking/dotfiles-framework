@@ -18,7 +18,7 @@ for PATCH in local-patch/*.patch; do
     if [ -f "${PATCH}" ]; then
         echo "apply ${PATCH}"
         pushd patched-src/ > /dev/null || exit 1
-        patch < "../${PATCH}" || exit 1
+        patch -p0 < "../${PATCH}" || exit 1
         popd > /dev/null || exit 1
     fi
 done
