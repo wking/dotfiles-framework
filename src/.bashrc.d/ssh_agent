@@ -1,0 +1,4 @@
+SSH_INFO_FILE="/tmp/$(whoami)/.ssh/.ssh-agent-info-$(hostname)"
+if [ -f "$SSH_INFO_FILE" ]; then
+    . "$SSH_INFO_FILE"
+fi

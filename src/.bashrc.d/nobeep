@@ -1,0 +1,12 @@
+# turn off terminal beep in X
+if [ $TERM == "xterm" ] && [ -n "$DISPLAY" ]
+    then
+    xset b off
+fi
+
+# turn of terminal beeps in the console, unless connecting via SSH
+if [ -z "$SSH_CLIENT" ]; then
+    if [ ! -z "$TERM" ]; then
+	setterm -blength 0
+    fi
+fi

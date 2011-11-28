@@ -2,43 +2,92 @@ This package provides automatic synchronization of assorted dotfiles,
 simplifying the maintenance of a uniform configuration across several
 hosts.
 
-The basic implentation was by Steve Kemp at
-  http://dotfiles.repository.steve.org.uk
+The `original implentation`_ was by Steve Kemp.
 
-To install it, simple replace your ~/.bashrc file with mine (or at
-least replace the portions dealing with ~.dotfiles).  Whenever you
-open a bash shell, that code will check for the existence of a
-~/.dotfiles directory, and if necessary, download it from my public
-repository (ideally using git, but it falls back on wgetting a
-tarball).  It then creates simlinks to any dotfiles that you had been
-missing automatically.
+_original implementation: http://dotfiles.repository.steve.org.uk
 
-After installation, the code in your .bashrc file will check for
-weekly updates at the central server.  Any updates to the files that
-it controls (i.e. dotfiles symlinked into ~/.dotfiles/_XXX) will be
-applied automatically.
+Installation
+------------
 
-In order to increase your local installation's similarity with the
-central server, take a look at the differences between your installed
-dotfiles and those in ~/.dotfile with
-  cd ~/.dotfiles
-  make localdiff | less
-If you see a few places where you like your local version better, make
-a patch, and save the hunks in (see *making local.patch* below)
-  ~/.dotfiles/local.patch
-You can do a dry run of any update with
-  cd ~/.dotfiles && ./fixup.sh --dry-run
-or overide with
-  cd ~/.dotfiles && ./fixup.sh --dry-run --force
-Then put .dotfiles in control with
-  make override
-which will replace all your local dotfiles with their .dotfiles version
-and then patch them as you specified in local.patch.
+To install dotfiles, you'll need to check out a copy of the source,
+either by using `git`:
 
+  $ git clone http://physics.drexel.edu/~wking/code/git/dotfiles.git
 
-Making local.patch
+or by downloading and unpacking a tarball:
 
-Set up your installed dotfiles as you want them to be.  (TODO: helper
-script for partial, interactive merges of the central version.)  Then
-just
-    make localpatch
+  $ wget http://physics.drexel.edu/~wking/code/tar/dotfiles.tgz
+  $ tar -xvf dotfiles.tgz
+
+It's up to you where you keep the unpacked source.  Popular choices
+are `~/src/dotfiles` and `~/.dotfiles`.  Once you've unpacked the
+source, set the `DOTFILES_DIR` environment variable to the source
+directory:
+
+  $ export DOTFILES_DIR=~/src/dotfiles/
+
+If you're using Git, you may have a choice of transport protocols for
+accessing the central repository.  Some protocols (e.g. SSH) often
+require you to authenticate before you are allowed access.  Because
+dotfiles will try and update your local repository as you log in, make
+sure you set up your authentication mechanism (e.g. SSH agent) before
+running `dotfiles.sh`.  If you don't want to bother authenticating,
+use a protocol that does not require authentication (e.g. HTTP) in
+your default pull URL.
+
+If you aren't using Git, you'll need to set the `DOTFILES_TGZ`
+environment variable so dotfiles knows where to look for updated
+versions of your central source:
+
+  $ export DOTFILES_TGZ="http://physics.drexel.edu/~wking/code/tar/dotfiles.tgz"
+
+Once you've setup the environment variables, you can run
+`bin/dotfiles.sh` to install dotfiles-controlled versions of any
+dotfiles that you don't already have.
+
+Maintenance
+-----------
+
+In order to stay abreast of changes to the central repository, you
+should run `dotfiles.sh` periodically.  An easy way to accomplish this
+is to source `${DOTFILES_DIR}/src/.bashrc.d/dotfiles` in your
+`~/.bashrc` (as I do at the end of my central `.bashrc`).  This will
+call `dotfiles.sh` whenever you open a Bash shell, ensuring you're
+always up-to-date at the start of your session.
+
+After syncing with the central server, any local patches
+(`${DOTFILES_DIR}/local-patch/*.patch`) are applied and filenames
+`${DOTFILES_DIR}/local-patch/*.remove` are removed to adapt to the local
+system.  As with installation, symlinks are automatically created for
+any dotfile (`${DOTFILES_DIR}/XXX`) that does not already have a
+locally installed version (`~/XXX`).
+
+If you followed the installation instructions above, you may have
+received warnings about files that you already have that dotfiles
+wants to control.  You have two options for dealing with these
+collisions:
+
+1. Control the file yourself.  In this case, you should add the
+   filename to a `local-patch/*.remove` file, so that dotfiles knows
+   you've assumed control.
+2. Delegate control to dotfiles.  In this case, you should remove your
+   local version of the file.  Dotfiles will symlink in its version
+   the next time you run `dotfiles.sh`.  If you have many such files,
+   `link.sh --force` will overwrite all of them at once.
+
+Local differences
+-----------------
+
+As we hinted at above, you can tailor how closely your local dotfiles
+installation tracks the central repository.  Using
+`local-patch/*.remove` allows you to select purely-local control for
+files.  When you only need a small tweak to central version, use
+`local-patch/*.patch`, giving some degree of shared control.  You run
+
+  $ cd "${DOTFILES_DIR}"
+  $ ./bin/diff.sh --local-patch
+
+To create `.patch` and `.remove` files that recreate your currently
+installed state from the current source state.  Edit (and optionally
+rename) these files to get the exact set of local adjustments you
+need.
