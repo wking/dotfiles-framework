@@ -3,27 +3,29 @@
 ! get keycodes with xev
 
 keycode 108 = Mode_switch
-clear mod3
-add mod3 = Mode_switch
+!clear mod3
+!add mod3 = Mode_switch
 
 ! U208* is subscript *
-keycode  10 = 1 exclam U2081 onehalf
+! U00B9 is superscript one
+keycode  10 = 1 exclam U2081 U00B9
 keycode  11 = 2 at U2082 twosuperior
 keycode  12 = 3 numbersign U2083 threesuperior
 keycode  13 = 4 dollar U2084 foursuperior
-keycode  14 = 5 percent
-! U207B is superscript minus
-! U00B9 is superscript one
+keycode  14 = 5 percent U2085 fivesuperior
 keycode  15 = 6 asciicircum U207B U00B9
 ! U2080 is subscript zero
 ! U2070 is superscript zerp
 keycode  16 = 7 ampersand U2080 U2070
+! U00B7 is the middle dot
 ! U2219 is the bullet operator
-keycode  17 = 8 asterisk infinity U2219
+! U22C5 is the dot operator
+keycode  17 = 8 asterisk infinity U22C5
 ! U2248 is almost equal (asymptotic)
 keycode  18 = 9 parenleft U2248
 ! U2205 is the empty set
 keycode  19 = 0 parenright emptyset
+! U207B is superscript minus
 ! U2213 is minus-or-plus
 keycode  20 = minus underscore notsign U2213
 keycode  21 = equal plus notequal plusminus
@@ -91,8 +93,11 @@ keycode  58 = m M U00B5 U2014
 ! U2112 is the Laplace transform
 keycode  59 = comma less U2131 U2112
 ! guillemotright
-! U22C5 is the dot operator
 ! U27E8 is the mathematical left angle bracket (bra)
 ! U27E9 is the mathematical right angle bracket (ket)
 keycode  60 = period greater includes U22C5
 keycode  61 = slash question rightarrow questiondown
+! U00A0 is a no-break space
+keycode  65 = space space U00A0 U00A0
+! Compose key with my right function key
+keycode 134 = Multi_key
