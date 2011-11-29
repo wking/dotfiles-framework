@@ -11,9 +11,17 @@
 ; Load useful customizations
 (load "wtk_common.el")
 (load "wtk_centralized_backups.el")
+(load "wtk_utf-8.el")
 (load "wtk_layout.el")
+(load "wtk_aspell.el")
 (load "wtk_epa.el")
 (load "wtk_org.el")
+(load "wtk_no-vc.el")
+
+(require 'cython-mode)
+
+; Play GNU Go in an emacs buffer
+;(require 'gnugo)
 
 ; Load querty.el, for switching keyboard mappings.
 ;(load "querty.el")
