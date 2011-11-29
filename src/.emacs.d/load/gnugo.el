@@ -1,8 +1,7 @@
 ;;; gnugo.el
 ;;;
-;;; Rel:standalone-gnugo-el-2-2-12
-;;;
-;;; Copyright (C) 1999,2000,2002,2003,2004,2005,2006 Thien-Thi Nguyen
+;;; Copyright (C) 1999, 2000, 2002, 2003,
+;;;   2004, 2005, 2006, 2007, 2008 Thien-Thi Nguyen
 ;;; This file is part of ttn's personal elisp library, released under GNU
 ;;; GPL with ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -46,20 +45,21 @@
 ;;
 ;; This code was tested with:
 ;; - GNU Emacs: 21.3 / 22.0.50 (from CVS)
-;; - GNU Go: 3.3.15 / 3.4 / 3.6-pre3
+;; - GNU Go: 3.3.15 / 3.4 / 3.6
 ;;
 ;;
 ;; Meta-Playing (aka Customizing)
 ;; ------------------------------
 ;;
 ;; Customization is presently limited to
-;;   vars:                 `gnugo-program'
-;;                         `gnugo-animation-string'
-;;                         `gnugo-mode-line'
-;;                         `gnugo-xpms'
-;;   normal hooks:         `gnugo-board-mode-hook'
-;;                         `gnugo-post-move-hook'
-;;   and the keymap:       `gnugo-board-mode-map'
+;;   vars:            `gnugo-program'
+;;                    `gnugo-animation-string'
+;;                    `gnugo-mode-line'
+;;                    `gnugo-X-face' `gnugo-O-face' `gnugo-grid-face'
+;;                    `gnugo-xpms'
+;;   normal hooks:    `gnugo-board-mode-hook'
+;;                    `gnugo-post-move-hook'
+;;   and the keymap:  `gnugo-board-mode-map'
 ;;
 ;; The variable `gnugo-xpms' is a special case.  To set it you need to load
 ;; gnugo-xpms.el (http://www.emacswiki.org) or some other library w/ congruent
@@ -126,6 +126,7 @@
 ;;          XPM set can be changed on the fly (global and/or local)
 ;;          font-locking for "X", "O", "[xo]"
 ;;          undo by N moves, by "move pair", or by board position
+;;          grid (letters and numbers) visibility can be toggled
 ;;
 ;;
 ;; History Predicted
@@ -149,7 +150,7 @@
 ;;;---------------------------------------------------------------------------
 ;;; Political arts
 
-(defconst gnugo-version "2.2.12"
+(defconst gnugo-version "2.2.13"
   "Version of gnugo.el currently loaded.
 Note that more than two dots in the value indicates \"pre-release\",
 or \"alpha\" or \"hackers-invited-all-else-beware\"; use at your own risk!
@@ -199,10 +200,9 @@ care not to call (directly or indirectly through some other function)
             ;; solely move by move.  Wisdom, on the other hand...
             yada yada yada))
   "*String whose individual characters are used for animation.
-Specifically, the `gnugo-worm-stones' and `gnugo-dragon-stones' commands
-render the stones in their respective (computed) groups as the first
-character in the string, then the next, and so on until the string (and/or
-the viewer) is exhausted.")
+Specifically, the commands `gnugo-worm-stones' and `gnugo-dragon-stones'
+render the stones in their respective result groups as the first character
+in the string, then the next, and so on.")
 
 (defvar gnugo-mode-line "~b ~w :~m :~u"
   "*A `mode-line-format'-compliant value for GNUGO Board mode.
@@ -216,13 +216,22 @@ replaced with their associated information:
 The times are in seconds, or \"-\" if that information is not available.
 For ~t, the value is a snapshot, use `gnugo-refresh' to update it.")
 
-(defvar gnugo-font-lock-keywords
-  '(("X" . font-lock-string-face)
-    ("O" . font-lock-builtin-face))
-  "*Font lock keywords for `gnugo-board-mode'.")
+(defvar gnugo-X-face 'font-lock-string-face
+  "*Name of face to use for X (black) stones.")
+
+(defvar gnugo-O-face 'font-lock-builtin-face
+  "*Name of face to use for O (white) stones.")
+
+(defvar gnugo-grid-face 'default
+  "*Name of face to use for the grid (A B C ... 1 2 3 ...).")
 
 ;;;---------------------------------------------------------------------------
 ;;; Variables for the inquisitive programmer
+
+(defconst gnugo-font-lock-keywords
+  '(("X" . gnugo-X-face)
+    ("O" . gnugo-O-face))
+  "Font lock keywords for `gnugo-board-mode'.")
 
 (defvar gnugo-option-history nil)
 
@@ -432,7 +441,7 @@ STRING omits the two trailing newlines.  See also `gnugo-query'."
                    (full   (gnugo-put :sync-return (concat so-far string))))
               (when (string-match "\n\n" full start)
                 (gnugo-put :sync-return
-                           (cons (current-time) (substring full 0 -2)))))))
+                  (cons (current-time) (substring full 0 -2)))))))
     (gnugo-send-line message)
     (let (rv)
       ;; type change => break
@@ -474,12 +483,10 @@ a format string applied to the rest of the args."
   (intern (format ":gnugo-%s%s-props" (gnugo-get :diamond) frag)))
 
 (defun gnugo-yang (c)
-  (case c
-    (?+ 'hoshi)
-    (?. 'empty)
-    (?X '(bmoku . bpmoku))
-    (?O '(wmoku . wpmoku))
-    (t (error "badness"))))
+  (cdr (assq c '((?+ . hoshi)
+                 (?. . empty)
+                 (?X . (bmoku . bpmoku))
+                 (?O . (wmoku . wpmoku))))))
 
 (defun gnugo-yy (yin yang &optional momentaryp)
   (gnugo-f (format "%d-%s"
@@ -503,29 +510,29 @@ a format string applied to the rest of the args."
             (setcar (symbol-plist yy) act))
           (or (gnugo-get :all-yy)
               (gnugo-put :all-yy
-                         (prog1 (mapcar (lambda (ent)
-                                          (let* ((k (car ent))
-                                                 (yy (gnugo-yy (cdr k) (car k))))
-                                            (setplist yy `(not-yet ,(cdr ent)))
-                                            yy))
-                                        (gnugo-get :xpms))
-                           (let ((imul (image-size (get (gnugo-yy 5 (gnugo-yang ?+))
-                                                        'not-yet))))
-                             (gnugo-put :w-imul (car imul))
-                             (gnugo-put :h-imul (cdr imul)))))))
+                (prog1 (mapcar (lambda (ent)
+                                 (let* ((k (car ent))
+                                        (yy (gnugo-yy (cdr k) (car k))))
+                                   (setplist yy `(not-yet ,(cdr ent)))
+                                   yy))
+                               (gnugo-get :xpms))
+                  (let ((imul (image-size (get (gnugo-yy 5 (gnugo-yang ?+))
+                                               'not-yet))))
+                    (gnugo-put :w-imul (car imul))
+                    (gnugo-put :h-imul (cdr imul)))))))
     (setplist (gnugo-f 'ispc) (and new
                                    ;; `(display (space :width 0))'
                                    ;; works as well, for newer emacs
                                    '(invisible t)))
     (gnugo-put :highlight-last-move-spec
-               (if new
-                   '((lambda (p)
-                       (get (gnugo-yy (get-text-property p 'gnugo-yin)
-                                      (get-text-property p 'gnugo-yang)
-                                      t)
-                            'display))
-                     0 delete-overlay)
-                 (gnugo-get :default-highlight-last-move-spec)))
+      (if new
+          '((lambda (p)
+              (get (gnugo-yy (get-text-property p 'gnugo-yin)
+                             (get-text-property p 'gnugo-yang)
+                             t)
+                   'display))
+            0 delete-overlay)
+        (gnugo-get :default-highlight-last-move-spec)))
     ;; a kludge to be reworked another time perhaps by another gnugo.el lover
     (dolist (group (cdr (assq 'dead (gnugo-get :game-over))))
       (mapc 'delete-overlay (cdar group))
@@ -534,28 +541,56 @@ a format string applied to the rest of the args."
     (gnugo-put :hmul (if new (gnugo-get :h-imul) 1))
     (gnugo-put :display-using-images new)))
 
+(defun gnugo-toggle-grid ()
+  "Turn the grid around the board on or off."
+  (interactive)
+  (funcall (if (memq :nogrid buffer-invisibility-spec)
+               'remove-from-invisibility-spec
+             'add-to-invisibility-spec)
+           :nogrid)
+  (save-excursion (gnugo-refresh)))
+
 (defun gnugo-propertize-board-buffer ()
   (erase-buffer)
   (insert (substring (cdr (gnugo-synchronous-send/return "showboard")) 3))
-  (let* ((size (gnugo-treeroot :SZ))
+  (let* ((grid-props (list 'invisible :nogrid
+                           'font-lock-face gnugo-grid-face))
+         (%gpad (gnugo-f 'gpad))
+         (%gspc (gnugo-f 'gspc))
+         (%lpad (gnugo-f 'lpad))
+         (%rpad (gnugo-f 'rpad))
+         (ispc-props (list 'category (gnugo-f 'ispc) 'rear-nonsticky t))
+         (size (gnugo-treeroot :SZ))
          (size-string (number-to-string size)))
     (goto-char (point-min))
     (put-text-property (point) (1+ (point)) 'category (gnugo-f 'tpad))
-    (forward-line 1)
-    (put-text-property (point-min) (point) 'invisible t)
+    (skip-chars-forward " ")
+    (put-text-property (1- (point)) (point) 'category %gpad)
+    (put-text-property (point) (progn (end-of-line) (point)) 'category %gspc)
+    (forward-char 1)
+    (add-text-properties (1+ (point-min)) (1- (point)) grid-props)
     (while (looking-at "\\s-*\\([0-9]+\\)[ ]")
       (let* ((row (match-string-no-properties 1))
              (edge (match-end 0))
              (other-edge (+ edge (* 2 size) -1))
+             (right-empty (+ other-edge (length row) 1))
              (top-p (string= size-string row))
              (bot-p (string= "1" row)))
-        (put-text-property (point) (1- edge) 'category (gnugo-f 'lpad))
+        (let* ((nL (- edge 1 (length size-string)))
+               (nR (- edge 1))
+               (ov (make-overlay nL nR (current-buffer) t)))
+          (add-text-properties nL nR grid-props)
+          ;; We redundantly set `invisible' in the overlay to workaround
+          ;; a display bug whereby text *following* the overlaid text is
+          ;; displayed with the face of the overlaid text, but only when
+          ;; that text is invisible (i.e., `:nogrid' in invisibility spec).
+          ;; This has something to do w/ the bletcherous `before-string'.
+          (overlay-put ov 'invisible :nogrid)
+          (overlay-put ov 'category %lpad))
         (do ((p edge (+ 2 p)) (ival 'even (if (eq 'even ival) 'odd 'even)))
             ((< other-edge p))
-          (let* ((position (format "%c%s" (aref [?A ?B ?C ?D ?E ?F ?G ?H
-                                                    ?J ?K ?L ?M ?N ?O ?P
-                                                    ?Q ?R ?S ?T]
-                                                (ash (- p edge) -1))
+          (let* ((position (format "%c%s" (aref "ABCDEFGHJKLMNOPQRST"
+                                                (truncate (- p edge) 2))
                                    row))
                  (yin (let ((A-p (= edge p))
                             (Z-p (= (1- other-edge) p)))
@@ -581,13 +616,10 @@ a format string applied to the rest of the args."
                                    front-sticky
                                    (gnugo-position gnugo-yin))))
           (unless (= (1- other-edge) p)
-            (add-text-properties (1+ p) (+ 2 p)
-                                 `(category
-                                   ,(gnugo-f 'ispc)
-                                   rear-nonsticky
-                                   t))
+            (add-text-properties (1+ p) (+ 2 p) ispc-props)
             (put-text-property p (+ 2 p) 'intangible ival)))
-        (goto-char (+ other-edge (length row) 1))
+        (add-text-properties (1+ other-edge) right-empty grid-props)
+        (goto-char right-empty)
         (when (looking-at "\\s-+\\(WH\\|BL\\).*capt.* \\([0-9]+\\).*$")
           (let ((prop (if (string= "WH" (match-string 1))
                           :white-captures
@@ -597,13 +629,17 @@ a format string applied to the rest of the args."
             (put-text-property beg end :gnugo-cf (cons (- end beg) prop))
             (gnugo-put prop (match-string-no-properties 2))))
         (end-of-line)
-        (put-text-property other-edge (point) 'category (gnugo-f 'rpad))
+        (put-text-property right-empty (point) 'category %rpad)
         (forward-char 1)))
-    (put-text-property (1- (point)) (point-max) 'invisible t)))
+    (add-text-properties (1- (point)) (point-max) grid-props)
+    (skip-chars-forward " ")
+    (put-text-property (1- (point)) (point) 'category %gpad)
+    (put-text-property (point) (progn (end-of-line) (point))
+                       'category %gspc)))
 
 (defun gnugo-merge-showboard-results ()
   (let ((aft (substring (cdr (gnugo-synchronous-send/return "showboard")) 3))
-        (adj 1)                   ; string to buffer position adjustment
+        (adj 1)                         ; string to buffer position adjustment
         (sync "[0-9]+ stones$")
         (bef (buffer-substring-no-properties (point-min) (point-max)))
         (bef-start 0) (bef-idx 0)
@@ -732,37 +768,37 @@ For all other values of RSEL, do nothing and return nil."
     (gnugo-put :scoring-seed (logior (ash (logand (car now) 255) 16)
                                      (cadr now))))
   (gnugo-put :game-over
-             (if (or (eq t resign)
-                     (and (stringp resign)
-                          (string-match "[BW][+][Rr]esign" resign)))
-                 (flet ((ls (color) (mapcar
-                                     (lambda (x)
-                                       (cons (list color)
-                                             (split-string x)))
-                                     (split-string
-                                      (gnugo-query "worm_stones %s" color)
-                                      "\n"))))
-                   (let ((live (append (ls "black") (ls "white"))))
-                     `((live ,@live)
-                       (dead))))
-               (let ((dd (gnugo-query "dragon_data"))
-                     (start 0) mem color ent live dead)
-                 (while (string-match "\\(.+\\):\n[^ ]+[ ]+\\(black\\|white\\)\n"
-                                      dd start)
-                   (setq mem (match-string 1 dd)
-                         color (match-string 2 dd)
-                         start (match-end 0)
-                         ent (cons (list color)
-                                   (sort (gnugo-lsquery "dragon_stones %s" mem)
-                                         'string<)))
-                   (string-match "\nstatus[ ]+\\(\\(ALIVE\\)\\|[A-Z]+\\)\n"
-                                 dd start)
-                   (if (match-string 2 dd)
-                       (push ent live)
-                     (push ent dead))
-                   (setq start (match-end 0)))
-                 `((live ,@live)
-                   (dead ,@dead))))))
+    (if (or (eq t resign)
+            (and (stringp resign)
+                 (string-match "[BW][+][Rr]esign" resign)))
+        (flet ((ls (color) (mapcar
+                            (lambda (x)
+                              (cons (list color)
+                                    (split-string x)))
+                            (split-string
+                             (gnugo-query "worm_stones %s" color)
+                             "\n"))))
+          (let ((live (append (ls "black") (ls "white"))))
+            `((live ,@live)
+              (dead))))
+      (let ((dd (gnugo-query "dragon_data"))
+            (start 0) mem color ent live dead)
+        (while (string-match "\\(.+\\):\n[^ ]+[ ]+\\(black\\|white\\)\n"
+                             dd start)
+          (setq mem (match-string 1 dd)
+                color (match-string 2 dd)
+                start (match-end 0)
+                ent (cons (list color)
+                          (sort (gnugo-lsquery "dragon_stones %s" mem)
+                                'string<)))
+          (string-match "\nstatus[ ]+\\(\\(ALIVE\\)\\|[A-Z]+\\)\n"
+                        dd start)
+          (if (match-string 2 dd)
+              (push ent live)
+            (push ent dead))
+          (setq start (match-end 0)))
+        `((live ,@live)
+          (dead ,@dead))))))
 
 (defun gnugo-push-move (userp move)
   (let* ((color (gnugo-get (if userp :user-color :gnugo-color)))
@@ -908,27 +944,55 @@ its move."
               (setcdr (car group) pall))))))
     ;; window update
     (when (setq window (get-buffer-window (current-buffer)))
-      (let* ((size (gnugo-treeroot :SZ))
-             (h (ash (- (window-height window)
-                        (round (* size (gnugo-get :hmul)))
-                        1)
-                     -1))
+      (let* ((gridp (not (memq :nogrid buffer-invisibility-spec)))
+             (size (gnugo-treeroot :SZ))
+             (under10p (< size 10))
+             (h (- (truncate (- (window-height window)
+                                (* size (gnugo-get :hmul))
+                                (if gridp 2 0))
+                             2)
+                   (if gridp 0 1)))
              (edges (window-edges window))
              (right-w-edge (nth 2 edges))
              (avail-width (- right-w-edge (nth 0 edges)))
+             (wmul (gnugo-get :wmul))
+             (imagesp (symbol-plist (gnugo-f 'ispc)))
              (w (/ (- avail-width
-                      (+ (* size (gnugo-get :wmul))
-                         (if (symbol-plist (gnugo-f 'ispc))
-                             0
-                           (1- size)))
-                      2)
+                      (* size wmul)
+                      (if imagesp
+                          0
+                        (1- size))
+                      2                 ; between board and grid
+                      (if gridp
+                          (if under10p 2 4)
+                        0))
                    2.0)))
         (dolist (pair `((tpad . ,(if (and h (< 0 h))
                                      `(display ,(make-string h 10))
-                                   '(invisible t)))
-                        (lpad . ,(if (< 0 w)
-                                     `(display (space :align-to ,w))
-                                   '(invisible t)))
+                                   '(invisible :nogrid)))
+                        (gpad . (display
+                                 (space :align-to
+                                        ,(+ w
+                                            2.0
+                                            (cond (imagesp (+ (* 0.5 wmul)
+                                                              (if under10p
+                                                                  -0.5
+                                                                0.5)))
+                                                  (under10p 0)
+                                                  (t 1))))))
+                        (gspc . ,(when imagesp
+                                   `(display (space-width ,(- wmul 1.0)))))
+                        (lpad . ,(let ((d `(display (space :align-to ,w))))
+                                   ;; We distinguish between these cases to
+                                   ;; workaround a display bug whereby the
+                                   ;; `before-string' is omitted entirely (not
+                                   ;; rendered) when interacting w/ the text
+                                   ;; mode last-move left-paren for moves in
+                                   ;; column A.
+                                   (if gridp
+                                       `(before-string
+                                         ,(apply 'propertize " " d))
+                                     d)))
                         (rpad . (display
                                  (space :align-to ,(1- avail-width))))))
           (setplist (gnugo-f (car pair)) (cdr pair)))))
@@ -938,29 +1002,29 @@ its move."
         (setq cur gnugo-mode-line)
         (gnugo-put :mode-line cur)
         (gnugo-put :mode-line-form
-                   (cond ((stringp cur)
-                          (setq cur (copy-sequence cur))
-                          (let (acc cut c)
-                            (while (setq cut (string-match "~[bwpmtu]" cur))
-                              (aset cur cut ?%)
-                              (setq cut (1+ cut) c (aref cur cut))
-                              (aset cur cut ?s)
-                              (push
-                               `(,(intern (format "squig-%c" c))
-                                 ,(case c
-                                    (?b '(or (gnugo-get :black-captures) 0))
-                                    (?w '(or (gnugo-get :white-captures) 0))
-                                    (?p '(gnugo-other (gnugo-get :last-mover)))
-                                    (?t '(let ((ws (gnugo-get :waiting-start)))
-                                           (if ws
-                                               (cadr (time-since ws))
-                                             "-")))
-                                    (?u '(or (gnugo-get :last-waiting) "-"))
-                                    (?m '(gnugo-move-history 'count))))
-                               acc))
-                            `(let ,(delete-dups (copy-sequence acc))
-                               (format ,cur ,@(reverse (mapcar 'car acc))))))
-                         (t cur))))
+          (cond ((stringp cur)
+                 (setq cur (copy-sequence cur))
+                 (let (acc cut c)
+                   (while (setq cut (string-match "~[bwpmtu]" cur))
+                     (aset cur cut ?%)
+                     (setq cut (1+ cut) c (aref cur cut))
+                     (aset cur cut ?s)
+                     (push
+                      `(,(intern (format "squig-%c" c))
+                        ,(case c
+                           (?b '(or (gnugo-get :black-captures) 0))
+                           (?w '(or (gnugo-get :white-captures) 0))
+                           (?p '(gnugo-other (gnugo-get :last-mover)))
+                           (?t '(let ((ws (gnugo-get :waiting-start)))
+                                  (if ws
+                                      (cadr (time-since ws))
+                                    "-")))
+                           (?u '(or (gnugo-get :last-waiting) "-"))
+                           (?m '(gnugo-move-history 'count))))
+                      acc))
+                   `(let ,(delete-dups (copy-sequence acc))
+                      (format ,cur ,@(reverse (mapcar 'car acc))))))
+                (t cur))))
       (let ((form (gnugo-get :mode-line-form)))
         (setq mode-line-process
               (and form
@@ -1003,12 +1067,14 @@ its move."
     (unless (= 0 (buffer-size))
       (message "Thank you for playing GNU Go."))
     (mapc (lambda (sym)
-            (setplist sym nil)    ; "...is next to fordliness." --Huxley
+            (setplist sym nil)          ; "...is next to fordliness." --Huxley
             (unintern sym))
           (append (gnugo-get :all-yy)
                   (mapcar 'gnugo-f
                           '(anim
                             tpad
+                            gpad
+                            gspc
                             lpad
                             rpad
                             ispc))))
@@ -1030,8 +1096,8 @@ To start a game try M-x gnugo."
          (move (format "play %s %s" (gnugo-get :user-color) pos))
          (accept (cdr (gnugo-synchronous-send/return move))))
     (unless (= ?= (aref accept 0))
-      (error accept))
-    (gnugo-push-move t pos)         ; value always nil for non-pass move
+      (error "%s" accept))
+    (gnugo-push-move t pos)             ; value always nil for non-pass move
     (let (inhibit-gnugo-refresh)
       (run-hooks 'gnugo-post-move-hook)
       (unless inhibit-gnugo-refresh
@@ -1056,7 +1122,7 @@ To start a game try M-x gnugo."
   (let ((accept (cdr (gnugo-synchronous-send/return
                       (format "play %s PASS" (gnugo-get :user-color))))))
     (unless (= ?= (aref accept 0))
-      (error accept)))
+      (error "%s" accept)))
   (let ((donep (gnugo-push-move t "PASS"))
         (buf (current-buffer)))
     (let (inhibit-gnugo-refresh)
@@ -1116,7 +1182,7 @@ To start a game try M-x gnugo."
                               ov))
                           stones))))
       (setplist (gnugo-f 'anim) (cons 'display cell))
-      (while (and (cdr spec)          ; let last linger lest levity lost
+      (while (and (cdr spec)            ; let last linger lest levity lost
                   (sit-for 0.08675309)) ; jenny jenny i got your number...
         (setcar cell (setq spec (cdr spec)))
         (set-buffer-modified-p t))
@@ -1255,7 +1321,7 @@ If FILENAME already exists, Emacs confirms that you wish to overwrite it."
                                         (format "loadsgf %s"
                                                 (expand-file-name filename)))))
                         0))
-      (error ans))
+      (error "%s" ans))
     (setq play (substring ans 2)
           wait (gnugo-other play)
           samep (string= (gnugo-get :user-color) play))
@@ -1265,22 +1331,22 @@ If FILENAME already exists, Emacs confirms that you wish to overwrite it."
       (gnugo-put :user-color play))
     (gnugo-put :sgf-collection (setq coll (gnugo/sgf-read-file filename)))
     (gnugo-put :sgf-gametree
-               (nth (let ((n (length coll)))
-                      ;; This is better:
-                      ;; (if (= 1 n)
-                      ;;     0
-                      ;;   (let* ((q (format "Which game? (1-%d)" n))
-                      ;;          (choice (1- (read-number q 1))))
-                      ;;     (if (and (< -1 choice) (< choice n))
-                      ;;         choice
-                      ;;       (message "(Selecting the first game)")
-                      ;;       0)))
-                      ;; but this is what we use (for now) to accomodate
-                      ;; (aka faithfully mimic) GTP `loadsgf' limitations:
-                      (unless (= 1 n)
-                        (message "(Selecting the first game)"))
-                      0)
-                    coll))
+      (nth (let ((n (length coll)))
+             ;; This is better:
+             ;; (if (= 1 n)
+             ;;     0
+             ;;   (let* ((q (format "Which game? (1-%d)" n))
+             ;;          (choice (1- (read-number q 1))))
+             ;;     (if (and (< -1 choice) (< choice n))
+             ;;         choice
+             ;;       (message "(Selecting the first game)")
+             ;;       0)))
+             ;; but this is what we use (for now) to accomodate
+             ;; (aka faithfully mimic) GTP `loadsgf' limitations:
+             (unless (= 1 n)
+               (message "(Selecting the first game)"))
+             0)
+           coll))
     (let* ((tree (gnugo-get :sgf-gametree))
            (loc tree)
            (count 0)
@@ -1296,22 +1362,22 @@ If FILENAME already exists, Emacs confirms that you wish to overwrite it."
           (push loc mem))
         (setq loc (cdr loc)))
       (gnugo-put :game-over
-                 (setq game-over
-                       (or (cdr (assq :RE (car tree)))
-                           (and (cdr mem)
-                                (equal '("tt" "tt")
-                                       (let ((order (if (string= "black" wait)
-                                                        '(:B :W)
-                                                      '(:W :B))))
-                                         (mapcar (lambda (pk)
-                                                   (cdr (assq (funcall pk order)
-                                                              (car (funcall pk mem)))))
-                                                 '(car cadr))))
-                                'two-passes))))
+        (setq game-over
+              (or (cdr (assq :RE (car tree)))
+                  (and (cdr mem)
+                       (equal '("tt" "tt")
+                              (let ((order (if (string= "black" wait)
+                                               '(:B :W)
+                                             '(:W :B))))
+                                (mapcar (lambda (pk)
+                                          (cdr (assq (funcall pk order)
+                                                     (car (funcall pk mem)))))
+                                        '(car cadr))))
+                       'two-passes))))
       (gnugo-put :monkey
-                 (vector (or (car mem) (gnugo-get :sgf-gametree))
-                         mem
-                         count))
+        (vector (or (car mem) (gnugo-get :sgf-gametree))
+                mem
+                count))
       (when (and game-over
                  ;; (maybe) todo: user var to inhibit (can be slow)
                  t)
@@ -1361,13 +1427,13 @@ turn to play.  Optional second arg NOALT non-nil inhibits this."
                             ?O
                           ?X))
                  (error "%s not occupied by %s" pos u)))))
-          (t (error "bad spec: %S" spec)))
+          (t (error "Bad spec: %S" spec)))
     (when (gnugo-get :game-over)
       (gnugo-put :game-over nil))
     (while (not (funcall done))
       (setq ans (cdr (gnugo-synchronous-send/return "undo")))
       (unless (= ?= (aref ans 0))
-        (error ans))
+        (error "%s" ans))
       (aset monkey 2 (decf count))
       (aset monkey 1 (setq mem (cdr mem)))
       (aset monkey 0 (or (car mem) (gnugo-get :sgf-gametree)))
@@ -1648,9 +1714,10 @@ In this mode, keys do not self insert.  Default keybindings:
   (add-hook 'kill-buffer-hook 'gnugo-cleanup nil t)
   (set (make-local-variable 'gnugo-state)
        (make-hash-table :size (1- 42) :test 'eq))
+  (add-to-invisibility-spec :nogrid)
   (mapc (lambda (prop)
-          (gnugo-put prop nil))   ; todo: separate display/game aspects;
-        '(:game-over                 ;       move latter to func `gnugo'
+          (gnugo-put prop nil))         ; todo: separate display/game aspects;
+        '(:game-over                    ;       move latter to func `gnugo'
           :waitingp
           :last-waiting
           :black-captures
@@ -1715,7 +1782,7 @@ In this mode, keys do not self insert.  Default keybindings:
     (gnugo-put :diamond (substring (process-name (gnugo-get :proc)) 5))
     (gnugo-put :gnugo-color (gnugo-other (gnugo-get :user-color)))
     (gnugo-put :highlight-last-move-spec
-               (gnugo-put :default-highlight-last-move-spec '("(" -1 nil)))
+      (gnugo-put :default-highlight-last-move-spec '("(" -1 nil)))
     (gnugo-put :lparen-ov (make-overlay 1 1))
     (gnugo-put :rparen-ov (let ((ov (make-overlay 1 1)))
                             (overlay-put ov 'display ")")
@@ -1786,12 +1853,12 @@ starting a new one.  See `gnugo-board-mode' documentation for more info."
                     (assoc sel all))))))
       ;; set up a new board
       (gnugo-board-mode)
-      (let ((half (ash (1+ (gnugo-treeroot :SZ)) -1)))
+      (let ((half (truncate (1+ (gnugo-treeroot :SZ)) 2)))
         (gnugo-goto-pos (format "A%d" half))
         (forward-char (* 2 (1- half)))
         (gnugo-put :last-user-bpos
-                   (gnugo-put :center-position
-                              (get-text-property (point) 'gnugo-position))))
+          (gnugo-put :center-position
+            (get-text-property (point) 'gnugo-position))))
       ;; first move
       (gnugo-put :game-start-time (current-time))
       (let ((g (gnugo-get :gnugo-color))
@@ -1842,6 +1909,7 @@ starting a new one.  See `gnugo-board-mode' documentation for more info."
           ("d"        . gnugo-dragon-stones)
           ("D"        . gnugo-dragon-data)
           ("t"        . gnugo-toggle-dead-group)
+          ("g"        . gnugo-toggle-grid)
           ("!"        . gnugo-estimate-score)
           (":"        . gnugo-command)
           (";"        . gnugo-command)
@@ -1934,7 +2002,7 @@ starting a new one.  See `gnugo-board-mode' documentation for more info."
 
 (provide 'gnugo)
 
- 
+
 ;;;---------------------------------------------------------------------------
 ;;; The remainder of this file defines a simplified SGF-handling library.
 ;;; When/if it should start to attain generality, it should be split off into
@@ -2022,13 +2090,17 @@ starting a new one.  See `gnugo-board-mode' documentation for more info."
 
 (defun gnugo/sgf-read-file (filename)
   "Return the collection (list) of gametrees in SGF[4] file FILENAME."
-  (let ((keywords (mapcar (lambda (full)
+  (let ((keywords (or (get 'gnugo/sgf-*r4-properties* :keywords)
+                      (put 'gnugo/sgf-*r4-properties* :keywords
+                           (mapcar (lambda (full)
                             (cons (car full)
                                   (intern (format ":%s" (car full)))))
-                          gnugo/sgf-*r4-properties*))
-        (specs (mapcar (lambda (full)
+                                   gnugo/sgf-*r4-properties*))))
+        (specs (or (get 'gnugo/sgf-*r4-properties* :specs)
+                   (put 'gnugo/sgf-*r4-properties* :specs
+                        (mapcar (lambda (full)
                          (cons (car full) (cdddr full)))
-                       gnugo/sgf-*r4-properties*)))
+                                gnugo/sgf-*r4-properties*)))))
     (flet ((sw () (skip-chars-forward " \t\n"))
            (x (end) (let ((beg (point))
                           (endp (case end
@@ -2178,5 +2250,4 @@ starting a new one.  See `gnugo-board-mode' documentation for more info."
           (insert ")\n"))
         (write-file filename)))))
 
-;;; ttn-sez: worth-compiling
 ;;; gnugo.el ends here
