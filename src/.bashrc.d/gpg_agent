@@ -1,4 +1,0 @@
-# GnuPG agent
-if [ -f "${HOME}/.gnupg/agent-info" ]; then
-    source "${HOME}/.gnupg/agent-info"
-fi

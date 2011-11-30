@@ -1,4 +1,0 @@
-# adjust for Ubuntu not recognizing screen.* terms
-if [ "${TERM:0:7}" == "screen." ]; then
-    export TERM="${TERM:7}"
-fi

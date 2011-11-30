@@ -2,65 +2,69 @@ This package provides automatic synchronization of assorted dotfiles,
 simplifying the maintenance of a uniform configuration across several
 hosts.
 
-The `original implentation`_ was by Steve Kemp.
+The `original implementation`_ was by Steve Kemp.
 
-_original implementation: http://dotfiles.repository.steve.org.uk
+.. _original implementation: http://dotfiles.repository.steve.org.uk
+
+This package only contains the ``dotfiles.sh`` script which manages the
+dotfiles framework.  The files that are being managed live in separate
+repositories.  A stand-alone framework has two goals:
+
+1. Allow others to reuse the framework with their own dotfile
+   repositories.
+2. Allow several concurrent repositories (e.g. public and private).
 
 Installation
 ------------
 
-To install dotfiles, you'll need to check out a copy of the source,
-either by using `git`:
+To install the distribution framework, just drop ``dotfiles.sh`` into
+your ``PATH``.  Also check that you have already installed the utilities
+listed in the ``External utilities`` section of ``dotfiles.sh``.
 
-  $ git clone http://physics.drexel.edu/~wking/code/git/dotfiles.git
+Setting up managed repositories will look something like this::
 
-or by downloading and unpacking a tarball:
+  $ mkdir ~/src/dotfiles
+  $ cd ~/src/dotfiles
+  $ dotfiles.sh clone public wget http://example.com/public-dotfiles.tar.gz
+  $ dotfiles.sh patch public
+  $ dotfiles.sh link --force-file --dry-run public
+  $ dotfiles.sh link --force-file public
 
-  $ wget http://physics.drexel.edu/~wking/code/tar/dotfiles.tgz
-  $ tar -xvf dotfiles.tgz
+Maintenance
+-----------
 
-It's up to you where you keep the unpacked source.  Popular choices
-are `~/src/dotfiles` and `~/.dotfiles`.  Once you've unpacked the
-source, set the `DOTFILES_DIR` environment variable to the source
-directory:
+Once you've got your repository installed, just run::
 
-  $ export DOTFILES_DIR=~/src/dotfiles/
+  $ dotfiles.sh --dotfiles-dir ~/src/dotfiles update
+
+to fetch any new developments from the central source, apply local
+patches, and link to any new files from your target directory.  In
+order to automate this, you may want to add this line to your
+``.bashrc``, which will update your dotfiles every time you start a new
+Bash shell.  Since dotfiles are not expected to change rapidly, the
+``update`` command remembers the last time it ran and only actually
+performs the update if it has been at least a week since the last
+update.
 
 If you're using Git, you may have a choice of transport protocols for
 accessing the central repository.  Some protocols (e.g. SSH) often
 require you to authenticate before you are allowed access.  Because
 dotfiles will try and update your local repository as you log in, make
 sure you set up your authentication mechanism (e.g. SSH agent) before
-running `dotfiles.sh`.  If you don't want to bother authenticating,
+running ``dotfiles.sh``.  If you don't want to bother authenticating,
 use a protocol that does not require authentication (e.g. HTTP) in
 your default pull URL.
 
-If you aren't using Git, you'll need to set the `DOTFILES_TGZ`
-environment variable so dotfiles knows where to look for updated
-versions of your central source:
-
-  $ export DOTFILES_TGZ="http://physics.drexel.edu/~wking/code/tar/dotfiles.tgz"
-
-Once you've setup the environment variables, you can run
-`bin/dotfiles.sh` to install dotfiles-controlled versions of any
-dotfiles that you don't already have.
-
-Maintenance
------------
-
-In order to stay abreast of changes to the central repository, you
-should run `dotfiles.sh` periodically.  An easy way to accomplish this
-is to source `${DOTFILES_DIR}/src/.bashrc.d/dotfiles` in your
-`~/.bashrc` (as I do at the end of my central `.bashrc`).  This will
-call `dotfiles.sh` whenever you open a Bash shell, ensuring you're
-always up-to-date at the start of your session.
+Local differences
+-----------------
 
 After syncing with the central server, any local patches
-(`${DOTFILES_DIR}/local-patch/*.patch`) are applied and filenames
-`${DOTFILES_DIR}/local-patch/*.remove` are removed to adapt to the local
-system.  As with installation, symlinks are automatically created for
-any dotfile (`${DOTFILES_DIR}/XXX`) that does not already have a
-locally installed version (`~/XXX`).
+(``${DOTFILES_DIR}/${REPO}/local-patch/*.patch``) are applied and
+filenames ``${DOTFILES_DIR}/${REPO}/local-patch/*.remove`` are removed
+to adapt to the local system.  As with installation, symlinks are
+automatically created for any dotfile
+(``${DOTFILES_DIR}/${REPO}/patched-src/XXX``) that does not already
+have a locally installed version (``${TARGET}/XXX``).
 
 If you followed the installation instructions above, you may have
 received warnings about files that you already have that dotfiles
@@ -68,26 +72,47 @@ wants to control.  You have two options for dealing with these
 collisions:
 
 1. Control the file yourself.  In this case, you should add the
-   filename to a `local-patch/*.remove` file, so that dotfiles knows
+   filename to a ``local-patch/*.remove`` file, so that dotfiles knows
    you've assumed control.
 2. Delegate control to dotfiles.  In this case, you should remove your
    local version of the file.  Dotfiles will symlink in its version
-   the next time you run `dotfiles.sh`.  If you have many such files,
-   `link.sh --force` will overwrite all of them at once.
+   the next time you run ``dotfiles.sh``.  If you have many such files,
+   ``dotfiles.sh link --force`` will overwrite all of them at once.
 
-Local differences
------------------
+You can use the ``diff`` command in ``dotfiles.sh`` to browse the
+differences between your checked out source and installed targets.
+The ``--local-patch`` option will record all such differences in the
+``local-patch`` directory for editing.
 
-As we hinted at above, you can tailor how closely your local dotfiles
-installation tracks the central repository.  Using
-`local-patch/*.remove` allows you to select purely-local control for
-files.  When you only need a small tweak to central version, use
-`local-patch/*.patch`, giving some degree of shared control.  You run
+Additional repositories
+-----------------------
 
-  $ cd "${DOTFILES_DIR}"
-  $ ./bin/diff.sh --local-patch
+Some dotfiles contain passwords, hostnames, or other personal
+information.  You may want to synchronize these files, but placing
+them in a globally readable repository would not be a good idea.  A
+simple solution would be to distribute *all* your dotfiles through
+secure channels (e.g. Git over SSH), but then nobody would benefit
+from the cool tricks you've used in your non-sensitive dotfiles.  A
+better solution is to run two (or more) dotfiles repositories
+concurrently, one for sensitive files and the other for public files.
+Of course, you might also want to run concurrent repositories reason
+besides privacy.  Whatever your motivation, installing another
+repository is the same as installing the first::
 
-To create `.patch` and `.remove` files that recreate your currently
-installed state from the current source state.  Edit (and optionally
-rename) these files to get the exact set of local adjustments you
-need.
+  $ cd ~/src/dotfiles
+  $ dotfiles.sh clone private git ssh://example.com/~/private-dotfiles.git
+  $ dotfiles.sh patch private
+  $ dotfiles.sh link --force-file private
+
+Future calls to ``dotfiles.sh update`` will update all of your
+repositories in turn.
+
+Help
+----
+
+This ``README`` is designed to get you started with this dotfiles
+framework and give you a feel for the overall structure.  For more
+details, browse through the ``dotfiles.sh`` documentation, starting
+with::
+
+  $ dotfiles.sh --help

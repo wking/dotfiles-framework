@@ -1,6 +1,0 @@
-# Run the dotfiles.sh script if it exists
-
-DS="${DOTFILES_DIR}/bin/dotfiles.sh"
-if [ -f "${DS}" ] && [ -x "${DS}" ]; then
-    "${DS}";
-fi
