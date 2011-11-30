@@ -26,6 +26,10 @@ WGET=$(which wget)
 #####
 # Utility functions
 
+BASH="${BASH_VERSION%.*}"
+BASH_MAJOR="${BASH%.*}"
+BASH_MINOR="${BASH#*.}"
+
 # usage: nonempty_option LOC NAME VALUE
 function nonempty_option()
 {
@@ -139,6 +143,12 @@ function get_repo_source()
 
 function wget_fetch()
 {
+	if [ "${BASH_MAJOR}" -lt 4 ]; then
+		echo "ERROR: ${0} requires Bash version >= 4.0 for wget support" >&2
+		echo "you're running ${BASH}, which doesn't support associative arrays" >&2
+		return 1
+	fi
+
 	REPO=$(nonempty_option 'wget_fetch' 'REPO' "${1}") || return 1
 	# get_repo_source() was just called on this repo in fetch()
 	TRANSFER=$(nonempty_option 'wget_fetch' 'TRANSFER' "${REPO_SOURCE_DATA['transfer']}") || return 1
