@@ -82,7 +82,7 @@ function run_on_all_repos()
 			if [ "${REPO}" = '*' ]; then
 				break  # no known repositories
 			fi
-			"${COMMAND}" "${REPO}" "${@}" || return 1
+			"${COMMAND}" "${@}" "${REPO}" || return 1
 		done
 		return
 	fi
