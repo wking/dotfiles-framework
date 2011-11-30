@@ -348,17 +348,17 @@ function diff()
 {
 	MODE='standard'
 	while [ "${1::2}" = '--' ]; do
-  	case "${1}" in
-  		'--removed')
-  			MODE='removed'
-  			;;
-  		'--local-patch')
-  			MODE='local-patch'
-  			;;
-  		*)
-  			echo "ERROR: invalid option to diff (${1})" >&2
-  			return 1
-  	esac
+		case "${1}" in
+  			'--removed')
+  				MODE='removed'
+  				;;
+ 	 		'--local-patch')
+  				MODE='local-patch'
+  				;;
+  			*)
+  				echo "ERROR: invalid option to diff (${1})" >&2
+  				return 1
+  		esac
 		shift
 	done
 	# multi-repo case handled in main() by run_on_all_repos()
