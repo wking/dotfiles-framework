@@ -253,7 +253,6 @@ function clone()
 		echo "ERROR: destination path (${REPO}) already exists." >&2
 		return 1
 	fi
-	mkdir -p "${REPO}"
 	CACHE_SOURCE='yes'
 	FETCH='yes'
 	case "${TRANSFER}" in
@@ -263,6 +262,7 @@ function clone()
 			"${GIT}" clone "${URL}" "${REPO}" || return 1
 			;;
 		'wget')
+			mkdir -p "${REPO}"
 			;;
 		*)
 			echo "PROGRAMMING ERROR: add ${TRANSFER} support to clone command" >&2
