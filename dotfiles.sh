@@ -379,7 +379,7 @@ function diff()
 		exec 3<&1     # save stdout to file descriptor 3
 		echo "save local removed to ${REPO}/local-patch/000-local.remove"
 		exec 1>"${REPO}/local-patch/000-local.remove"  # redirect stdout
-		diff "${REPO}" --removed
+		diff --removed "${REPO}"
 		exec 1<&3     # restore old stdout
 		exec 3<&-     # close temporary fd 3
 		return
