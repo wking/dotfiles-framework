@@ -315,7 +315,7 @@ function fetch()
 	get_repo_source "${REPO}" || return 1
 	TRANSFER=$(nonempty_option 'fetch' 'TRANSFER' "${REPO_SOURCE_DATA['transfer']}") || return 1
 	if [ "${TRANSFER}" = 'git' ]; then
-		"${GIT}" --git-dir "${REPO}/.git" --work-tree "${REPO}" pull || return 1
+		(cd "${REPO}" && "${GIT}" pull) || return 1
 	elif [ "${TRANSFER}" = 'wget' ]; then
 		wget_fetch "${REPO}" || return 1
 	else
