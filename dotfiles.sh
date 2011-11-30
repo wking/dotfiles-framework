@@ -29,14 +29,14 @@ WGET=$(which wget)
 # usage: nonempty_option LOC NAME VALUE
 function nonempty_option()
 {
-		LOC="${1}"
-		NAME="${2}"
-		VALUE="${3}"
-		if [ -z "${VALUE}" ]; then
-				echo "ERROR: empty value for ${NAME} in ${LOC}" >&2
-				return 1
-		fi
-		echo "${VALUE}"
+	LOC="${1}"
+	NAME="${2}"
+	VALUE="${3}"
+	if [ -z "${VALUE}" ]; then
+		echo "ERROR: empty value for ${NAME} in ${LOC}" >&2
+		return 1
+	fi
+	echo "${VALUE}"
 }
 
 # usage: maxargs LOC MAX "${@}"
@@ -78,10 +78,10 @@ function run_on_all_repos()
 	COMMAND="${1}"
 	if [ -z "${REPO}" ]; then  # run on all repositories
  		for REPO in *; do
-				if [ "${REPO}" = '*' ]; then
-					break  # no known repositories
-				fi
-				"${COMMAND}" "${REPO}" || return 1
+			if [ "${REPO}" = '*' ]; then
+				break  # no known repositories
+			fi
+			"${COMMAND}" "${REPO}" || return 1
 		done
 		return
 	fi
@@ -484,18 +484,18 @@ function link()
 	BACKUP='yes'
 	while [ "${1::2}" = '--' ]; do
   	case "${1}" in
-				'--force')
-				FORCE='yes'
+		'--force')
+			FORCE='yes'
 			;;
-				'--force-file')
-				FORCE='file'
+		'--force-file')
+			FORCE='file'
 			;;
-			'--dry-run')
-				DRY_RUN='yes'
-				;;
-			'--no-backup')
-				BACKUP='no'
-				;;
+		'--dry-run')
+			DRY_RUN='yes'
+			;;
+		'--no-backup')
+			BACKUP='no'
+			;;
   		*)
   			echo "ERROR: invalid option to link (${1})" >&2
   			return 1
@@ -690,21 +690,21 @@ function main()
 	COMMAND=''
 	while [ "${1::2}" = '--' ]; do
   	case "${1}" in
-			'--help')
-				main_help || return 1
-				return
-				;;
-			'--version')
-				echo "${VERSION}"
-				return
-				;;
+		'--help')
+			main_help || return 1
+			return
+			;;
+		'--version')
+			echo "${VERSION}"
+			return
+			;;
   		'--dotfiles-dir')
   			DOTFILES_DIR="${2}"
-				shift
+			shift
   			;;
   		'--target')
   			TARGET="${2}"
-				shift
+			shift
   			;;
   		*)
   			echo "ERROR: invalid option to ${0} (${1})" >&2
@@ -721,7 +721,7 @@ function main()
 		"${COMMAND}_help" || return 1
 	elif [ "${COMMAND}" = 'clone' ]; then
 		"${COMMAND}" "${@}" || return 1
-  else
+	else
 		OPTIONS=()
 		while [ "${1::2}" = '--' ]; do
 			OPTIONS+=("${1}")
