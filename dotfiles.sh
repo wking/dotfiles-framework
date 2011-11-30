@@ -350,16 +350,16 @@ function diff()
 	MODE='standard'
 	while [ "${1::2}" = '--' ]; do
 		case "${1}" in
-  			'--removed')
-  				MODE='removed'
-  				;;
+			'--removed')
+				MODE='removed'
+				;;
  	 		'--local-patch')
-  				MODE='local-patch'
-  				;;
-  			*)
-  				echo "ERROR: invalid option to diff (${1})" >&2
-  				return 1
-  		esac
+				MODE='local-patch'
+				;;
+			*)
+				echo "ERROR: invalid option to diff (${1})" >&2
+				return 1
+			esac
 		shift
 	done
 	# multi-repo case handled in main() by run_on_all_repos()
@@ -484,23 +484,23 @@ function link()
 	DRY_RUN='no' # If 'yes', disable any actions that change the filesystem
 	BACKUP='yes'
 	while [ "${1::2}" = '--' ]; do
-  	case "${1}" in
-		'--force')
-			FORCE='yes'
-			;;
-		'--force-file')
-			FORCE='file'
-			;;
-		'--dry-run')
-			DRY_RUN='yes'
-			;;
-		'--no-backup')
-			BACKUP='no'
-			;;
-  		*)
-  			echo "ERROR: invalid option to link (${1})" >&2
-  			return 1
-  	esac
+		case "${1}" in
+			'--force')
+				FORCE='yes'
+				;;
+			'--force-file')
+				FORCE='file'
+				;;
+			'--dry-run')
+				DRY_RUN='yes'
+				;;
+			'--no-backup')
+				BACKUP='no'
+				;;
+			*)
+				echo "ERROR: invalid option to link (${1})" >&2
+				return 1
+		esac
 		shift
 	done
 	# multi-repo case handled in main() by run_on_all_repos()
@@ -690,27 +690,27 @@ function main()
 {
 	COMMAND=''
 	while [ "${1::2}" = '--' ]; do
-  	case "${1}" in
-		'--help')
-			main_help || return 1
-			return
-			;;
-		'--version')
-			echo "${VERSION}"
-			return
-			;;
-  		'--dotfiles-dir')
-  			DOTFILES_DIR="${2}"
-			shift
-  			;;
-  		'--target')
-  			TARGET="${2}"
-			shift
-  			;;
-  		*)
-  			echo "ERROR: invalid option to ${0} (${1})" >&2
-  			return 1
-  	esac
+		case "${1}" in
+			'--help')
+				main_help || return 1
+				return
+				;;
+			'--version')
+				echo "${VERSION}"
+				return
+				;;
+	       		'--dotfiles-dir')
+       				DOTFILES_DIR="${2}"
+				shift
+				;;
+			'--target')
+				TARGET="${2}"
+				shift
+				;;
+			*)
+				echo "ERROR: invalid option to ${0} (${1})" >&2
+				return 1
+		esac
 		shift
 	done
 	COMMAND=$(get_selection "${1}" "${COMMANDS[@]}") || return 1
