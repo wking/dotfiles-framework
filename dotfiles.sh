@@ -76,12 +76,13 @@ function get_selection()
 function run_on_all_repos()
 {
 	COMMAND="${1}"
+	shift
 	if [ -z "${REPO}" ]; then  # run on all repositories
  		for REPO in *; do
 			if [ "${REPO}" = '*' ]; then
 				break  # no known repositories
 			fi
-			"${COMMAND}" "${REPO}" || return 1
+			"${COMMAND}" "${REPO}" "${@}" || return 1
 		done
 		return
 	fi
@@ -728,7 +729,7 @@ function main()
 			shift
 		done
 		if [ "${#}" -eq 0 ]; then
- 			run_on_all_repos "${COMMAND}" "$OPTIONS[@]" || return 1
+ 			run_on_all_repos "${COMMAND}" "${OPTIONS[@]}" || return 1
 		else
 			maxargs "${0}" 1 "${@}" || return 1
 		 	"${COMMAND}" "${OPTIONS[@]}" "${1}" || return 1
