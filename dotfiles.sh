@@ -121,6 +121,11 @@ fi
 
 function set_repo_source()
 {
+	if [ "${BASH_MAJOR}" -lt 4 ]; then
+		echo "ERROR: ${0} requires Bash version >= 4.0 for source_cache" >&2
+		echo "you're running ${BASH}, which doesn't support associative arrays" >&2
+		return 1
+	fi
 	REPO=$(nonempty_option 'set_repo_source' 'REPO' "${1}") || return 1
 	> "${REPO}/source_cache" || return 1
 	for KEY in "${!REPO_SOURCE_DATA[@]}"; do
@@ -131,6 +136,11 @@ function set_repo_source()
 # usage: get_repo_source REPO
 function get_repo_source()
 {
+	if [ "${BASH_MAJOR}" -lt 4 ]; then
+		echo "ERROR: ${0} requires Bash version >= 4.0 for source_cache support" >&2
+		echo "you're running ${BASH}, which doesn't support associative arrays" >&2
+		return 1
+	fi
 	REPO=$(nonempty_option 'get_repo_source' 'REPO' "${1}") || return 1
 	REPO_SOURCE_DATA=()
 	if [ -f "${REPO}/source_cache" ]; then
@@ -155,12 +165,6 @@ function get_repo_source()
 
 function wget_fetch()
 {
-	if [ "${BASH_MAJOR}" -lt 4 ]; then
-		echo "ERROR: ${0} requires Bash version >= 4.0 for wget support" >&2
-		echo "you're running ${BASH}, which doesn't support associative arrays" >&2
-		return 1
-	fi
-
 	REPO=$(nonempty_option 'wget_fetch' 'REPO' "${1}") || return 1
 	# get_repo_source() was just called on this repo in fetch()
 	TRANSFER=$(nonempty_option 'wget_fetch' 'TRANSFER' "${REPO_SOURCE_DATA['transfer']}") || return 1
