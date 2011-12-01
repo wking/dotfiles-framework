@@ -114,7 +114,10 @@ function list_files()
 }
 
 # Global variable to allow passing associative arrats between functions
-declare -A REPO_SOURCE_DATA
+
+if [ "${BASH_MAJOR}" -ge 4 ]; then
+	declare -A REPO_SOURCE_DATA
+fi
 
 function set_repo_source()
 {
