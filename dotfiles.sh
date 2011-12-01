@@ -122,7 +122,7 @@ fi
 function set_repo_source()
 {
 	if [ "${BASH_MAJOR}" -lt 4 ]; then
-		echo "ERROR: ${0} requires Bash version >= 4.0 for source_cache" >&2
+		echo "ERROR: ${0}'s set_repo_source requires Bash version >= 4.0" >&2
 		echo "you're running ${BASH}, which doesn't support associative arrays" >&2
 		return 1
 	fi
@@ -137,7 +137,7 @@ function set_repo_source()
 function get_repo_source()
 {
 	if [ "${BASH_MAJOR}" -lt 4 ]; then
-		echo "ERROR: ${0} requires Bash version >= 4.0 for source_cache support" >&2
+		echo "ERROR: ${0}'s get_repo_source() requires Bash version >= 4.0" >&2
 		echo "you're running ${BASH}, which doesn't support associative arrays" >&2
 		return 1
 	fi
@@ -328,8 +328,13 @@ function fetch()
 	# multi-repo case handled in main() by run_on_all_repos()
 	REPO=$(nonempty_option 'fetch' 'REPO' "${1}") || return 1
 	maxargs 'fetch' 1 "${@}" || return 1
-	get_repo_source "${REPO}" || return 1
-	TRANSFER=$(nonempty_option 'fetch' 'TRANSFER' "${REPO_SOURCE_DATA['transfer']}") || return 1
+	if [ "${BASH_MAJOR}" -ge 4 ]; then
+		get_repo_source "${REPO}" || return 1
+		TRANSFER=$(nonempty_option 'fetch' 'TRANSFER' "${REPO_SOURCE_DATA['transfer']}") || return 1
+	else
+		echo "WARNING: Bash version < 4.0, assuming all repos use git transfer" >&2
+		TRANSFER='git'
+	fi
 	if [ "${TRANSFER}" = 'git' ]; then
 		(cd "${REPO}" && "${GIT}" pull) || return 1
 	elif [ "${TRANSFER}" = 'wget' ]; then
