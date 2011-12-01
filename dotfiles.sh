@@ -24,11 +24,20 @@ TOUCH=$(which touch)
 WGET=$(which wget)
 
 #####
-# Utility functions
+# Compatibility checks
 
 BASH="${BASH_VERSION%.*}"
 BASH_MAJOR="${BASH%.*}"
 BASH_MINOR="${BASH#*.}"
+
+if [ "${BASH_MAJOR}" -eq 3 ] && [ "${BASH_MINOR}" -eq 0 ]; then
+	echo "ERROR: ${0} requires Bash version >= 3.1" >&2
+	echo "you're running ${BASH}, which doesn't support += array assignment" >&2
+	exit 1
+fi
+
+#####
+# Utility functions
 
 # usage: nonempty_option LOC NAME VALUE
 function nonempty_option()
