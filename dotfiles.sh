@@ -460,6 +460,7 @@ function patch()
 	# remove any files marked for removal in local-patch
 	for REMOVE in "${REPO}/local-patch"/*.remove; do
 		if [ -f "${REMOVE}" ]; then
+			echo "apply ${FILE}"
 			while read LINE; do
 				if [ -z "${LINE}" ] || [ "${LINE:0:1}" = '#' ]; then
 					continue  # ignore blank lines and comments
