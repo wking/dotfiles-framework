@@ -163,6 +163,17 @@ function get_repo_source()
 	fi
 }
 
+function git_fetch()
+{
+	REPO=$(nonempty_option 'git_fetch' 'REPO' "${1}") || return 1
+	REMOTES=$(cd "${REPO}" && "${GIT}" remote) || return 1
+	if [ -n "${REMOTES}" ]; then
+		(cd "${REPO}" && "${GIT}" pull) || return 1
+	else
+		echo "no remote repositories found for ${REPO}"
+	fi
+}
+
 function wget_fetch()
 {
 	REPO=$(nonempty_option 'wget_fetch' 'REPO' "${1}") || return 1
@@ -201,6 +212,7 @@ function wget_fetch()
 		echo "already downloaded the ETag=${ETAG} version of ${URL}"
 	fi
 }
+
 
 # usage: link_file REPO FILE
 #
@@ -336,7 +348,7 @@ function fetch()
 		TRANSFER='git'
 	fi
 	if [ "${TRANSFER}" = 'git' ]; then
-		(cd "${REPO}" && "${GIT}" pull) || return 1
+		git_fetch "${REPO}" || return 1
 	elif [ "${TRANSFER}" = 'wget' ]; then
 		wget_fetch "${REPO}" || return 1
 	else
