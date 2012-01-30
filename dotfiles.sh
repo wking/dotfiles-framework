@@ -476,7 +476,7 @@ function patch()
 		if [ -f "${FILE}" ]; then
 			echo "apply ${FILE}"
 			pushd "${REPO}/patched-src/" > /dev/null || return 1
-			"${PATCH}" -p0 < "../../${FILE}" || return 1
+			"${PATCH}" -p1 < "../../${FILE}" || return 1
 			popd > /dev/null || return 1
 		fi
 	done
