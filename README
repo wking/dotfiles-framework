@@ -107,6 +107,21 @@ repository is the same as installing the first::
 Future calls to ``dotfiles.sh update`` will update all of your
 repositories in turn.
 
+Dependencies
+------------
+
+``dotfiles.sh`` is a script, so there are no compilation dependencies.
+However, you will need sufficiently modern versions of the external
+utilities it uses.  They are listed at the beginning of
+``dotfiles.sh``, which should make it easy so select alternative
+implementations if the version installed in your ``PATH`` is not up to
+standard.  For example, I just set things up on my univerity's archaic
+SunOS 5.10 server (circa 2005), and I needed to install current
+versions of ``bash``, ``ln`` (in the coreutils_ package), and ``tar``
+to succesfully run a ``wget``-based dotfile repository.
+
+.. _coreutils: http://www.gnu.org/software/coreutils/
+
 Help
 ----
 
@@ -120,4 +135,4 @@ with::
 Homepage
 --------
 
-http://physics.drexel.edu/~wking/unfolding-disasters/posts/dotfiles/
+http://blog.tremily.us/posts/dotfiles/
