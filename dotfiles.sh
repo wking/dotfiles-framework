@@ -94,6 +94,8 @@ function run_on_all_repos()
  		for REPO in *; do
 			if [ "${REPO}" = '*' ]; then
 				break  # no known repositories
+			elif [ -f "${REPO}" ]; then
+				continue  # repositories are directories
 			fi
 			"${COMMAND}" "${@}" "${REPO}" || return 1
 		done
