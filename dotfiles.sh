@@ -199,11 +199,9 @@ function wget_fetch()
 		if [ -n "${SERVER_ETAG}" ]; then  # store new ETag
 			REPO_SOURCE_DATA['etag']="${SERVER_ETAG}"
 			set_repo_source "${REPO}" || return 1
-		else
-			if [ -n "${ETAG}" ]; then  # clear old ETag
-				unset "${REPO_SOURCE_DATA['etag']}"
-				set_repo_source "${REPO}" || return 1
-			fi
+		elif [ -n "${ETAG}" ]; then  # clear old ETag
+			unset "${REPO_SOURCE_DATA['etag']}"
+			set_repo_source "${REPO}" || return 1
 		fi
 		echo "extracting ${BUNDLE} to ${REPO}"
 		"${TAR}" -xf "${BUNDLE}" -C "${REPO}" --strip-components 1 --overwrite || return 1
@@ -433,10 +431,8 @@ function diff()
 			if [ ! -e "${TARGET}/${FILE}" ]; then
 				echo "${FILE}"
 			fi
-		else
-			if [ -f "${TARGET}/${FILE}" ]; then
-				(cd "${REPO}/src" && "${DIFF}" -u "${FILE}" "${TARGET}/${FILE}")
-			fi
+		elif [ -f "${TARGET}/${FILE}" ]; then
+			(cd "${REPO}/src" && "${DIFF}" -u "${FILE}" "${TARGET}/${FILE}")
 		fi
 	done <<-EOF
 		$(list_files "${REPO}/src")
