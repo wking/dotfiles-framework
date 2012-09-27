@@ -643,7 +643,7 @@ function disconnect_help()
 function disconnect()
 {
 	# multi-repo case handled in main() by run_on_all_repos()
-	REPO=$(nonempty_option 'link' 'REPO' "${1}") || return 1
+	REPO=$(nonempty_option 'disconnect' 'REPO' "${1}") || return 1
 	maxargs 'disconnect' 1 "${@}" || return 1
 	DOTFILES_SRC="${DOTFILES_DIR}/${REPO}/patched-src"
 
@@ -723,7 +723,7 @@ function update_help()
 function update()
 {
 	# multi-repo case handled in main() by run_on_all_repos()
-	REPO=$(nonempty_option 'link' 'REPO' "${1}") || return 1
+	REPO=$(nonempty_option 'update' 'REPO' "${1}") || return 1
 	maxargs 'disconnect' 1 "${@}" || return 1
 
 	# Update once a week from our remote repository.  Mark updates by
