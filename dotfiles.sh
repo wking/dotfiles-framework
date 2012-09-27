@@ -708,7 +708,7 @@ function update_help()
 
 	cat <<-EOF
 
-		usage: $0 ${COMMAND} [REPO]
+		usage: $0 ${COMMAND} [options] [REPO]
 
 		Where 'REPO' is the name the dotfiles repository to update.
 		If it is not given, all repositories will be updateed.
@@ -717,11 +717,19 @@ function update_help()
 		to bring them in sync with the central repositories.  Keeps track
 		of the last update time to avoid multiple fetches in the same
 		week.
+
+		${COMMAND} passes any options it receives through to the link
+		command.
 	EOF
 }
 
 function update()
 {
+	LINK_OPTS=''
+	while [ "${1::2}" = '--' ]; do
+		LINK_OPTS="${LINK_FN_OPTS} ${1}"
+		shift
+	done
 	# multi-repo case handled in main() by run_on_all_repos()
 	REPO=$(nonempty_option 'update' 'REPO' "${1}") || return 1
 	maxargs 'disconnect' 1 "${@}" || return 1
@@ -736,7 +744,7 @@ function update()
 		"${TOUCH}" "${UPDATE_FILE}" || return 1
 		fetch "${REPO}" || return 1
 		patch "${REPO}" || return 1
-		link "${REPO}" || return 1
+		link ${LINK_OPTS} "${REPO}" || return 1
 		echo "${REPO} dotfiles updated"
 	fi
 }
