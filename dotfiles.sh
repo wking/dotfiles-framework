@@ -627,7 +627,7 @@ function disconnect()
 	BASHRC='no'
 
 	while read FILE; do
-		if [ "${FILE}" = '.bashrc' ] && [ "$TARGET" -ef "${HOME}" ]; then
+		if [ "${FILE}" = '.bashrc' ] && [ "${TARGET}" -ef "${HOME}" ]; then
 			BASHRC='yes'
 		fi
 		if [ "${DOTFILES_SRC}/${FILE}" -ef "${TARGET}/${FILE}" ] && [ -h "${TARGET}/${FILE}" ]; then
