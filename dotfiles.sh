@@ -26,17 +26,17 @@ CHECK_WGET_TYPE_AND_ENCODING='no'
 #####
 # External utilities
 
-DIFF=$(which diff)
-GIT=$(which git)
-LN=$(which ln)
-MV=$(which mv)
-PATCH=$(which patch)
-SED=$(which sed)
-RM=$(which rm)
-RSYNC=$(which rsync)
-TAR=$(which tar)
-TOUCH=$(which touch)
-WGET=$(which wget)
+DIFF=${DOTFILES_DIFF:-$(which diff)}
+GIT=${DOTFILES_GIT:-$(which git)}
+LN=${DOTFILES_LN:-$(which ln)}
+MV=${DOTFILES_MV:-$(which mv)}
+PATCH=${DOTFILES_PATCH:-$(which patch)}
+SED=${DOTFILES_SED:-$(which sed)}
+RM=${DOTFILES_RM:-$(which rm)}
+RSYNC=${DOTFILES_RSYNC:-$(which rsync)}
+TAR=${DOTFILES_TAR:-$(which tar)}
+TOUCH=${DOTFILES_TOUCH:-$(which touch)}
+WGET=${DOTFILES_WGET:-$(which wget)}
 
 #####
 # Compatibility checks
