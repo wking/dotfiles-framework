@@ -257,7 +257,7 @@ function link_file()
 		echo "link ${TARGET}/${FILE} to ${DOTFILES_DIR}/${REPO}/patched-src/${FILE}"
 	else
 		echo -n 'link '
-		"${LN}" -sv "${DOTFILES_DIR}/${REPO}/patched-src/${FILE}" "${TARGET}/${FILE}" || return 1
+		"${LN}" -rsv "${DOTFILES_DIR}/${REPO}/patched-src/${FILE}" "${TARGET}/${FILE}" || return 1
 	fi
 }
 
