@@ -592,6 +592,9 @@ function link()
 			if [ "${FORCE_LINK}" = 'no' ]; then
 				# don't prompt about --force-link, because this will happen a lot
 				continue  # already simlinked
+			elif [ ! -h "${TARGET}/${FILE}" ]; then
+				# target file/dir underneath an already symlinked dir
+				continue
 			else
 				# don't backup links that already point to the right place
 				BACKUP='no'
