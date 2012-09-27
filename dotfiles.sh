@@ -130,7 +130,7 @@ function list_files()
 	done < <(cd "${DIR}" && find .)
 }
 
-# Global variable to allow passing associative arrats between functions
+# Global variable to allow passing associative arrays between functions
 
 if [ "${BASH_MAJOR}" -ge 4 ]; then
 	declare -A REPO_SOURCE_DATA
