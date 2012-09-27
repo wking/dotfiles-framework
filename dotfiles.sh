@@ -523,36 +523,47 @@ function link_help()
 
 	cat <<-EOF
 
-		usage: $0 ${COMMAND} [--force|--force-file] [--dry-run] [--no-backup] [REPO]
+		usage: $0 ${COMMAND} [--force] [--force-dir] [--force-file] [--force-link]
+             [--dry-run] [--no-backup] [REPO]
 
 		Where 'REPO' is the name the dotfiles repository to link.  If it
 		is not given, all repositories will be linked.
 
-		By default, link.sh only replaces missing files and simlinks.  You
-		can optionally overwrite any local files by passing the --force
-		option.
+		By default, ${COMMAND} only replaces missing directories, files,
+		simlinks.  You can optionally overwrite any local stuff by passing
+		the --force option.  If you only want to overwrite a particular
+		type, use the more granular --force-dir, etc.
 	EOF
 }
 
 function link()
 {
-	FORCE='no'   # If 'file', overwrite existing files.
-	             # If 'yes', overwrite existing files and dirs.
+	FORCE_DIR='no'    # If 'yes', overwrite existing directories.
+	FORCE_FILE='no'   # If 'yes', overwrite existing files.
+	FORCE_LINK='no'   # If 'yes', overwrite existing symlinks.
 	DRY_RUN='no' # If 'yes', disable any actions that change the filesystem
-	BACKUP='yes'
+	BACKUP_OPT='yes'
 	while [ "${1::2}" = '--' ]; do
 		case "${1}" in
 			'--force')
-				FORCE='yes'
+				FORCE_DIR='yes'
+				FORCE_FILE='yes'
+				FORCE_LINK='yes'
+				;;
+			'--force-dir')
+				FORCE_DIR='yes'
 				;;
 			'--force-file')
-				FORCE='file'
+				FORCE_FILE='yes'
+				;;
+			'--force-link')
+				FORCE_LINK='yes'
 				;;
 			'--dry-run')
 				DRY_RUN='yes'
 				;;
 			'--no-backup')
-				BACKUP='no'
+				BACKUP_OPT='no'
 				;;
 			*)
 				echo "ERROR: invalid option to link (${1})" >&2
@@ -566,17 +577,24 @@ function link()
 	DOTFILES_SRC="${DOTFILES_DIR}/${REPO}/patched-src"
 
 	while read FILE; do
+		BACKUP="${BACKUP_OPT}"
 		if [ "${DOTFILES_SRC}/${FILE}" -ef "${TARGET}/${FILE}" ]; then
-			continue  # already simlinked
-		fi
-		if [ -d "${DOTFILES_SRC}/${FILE}" ] && [ -d "${TARGET}/${FILE}" ] && \
-			[ "${FORCE}" != 'yes' ]; then
-			echo "use --force to override the existing directory: ${TARGET}/${FILE}"
-			continue  # allow unlinked directories
-		fi
-		if [ -e "$TARGET/${FILE}" ] && [ "${FORCE}" = 'no' ]; then
-			echo "use --force to override the existing target: ${TARGET}/${FILE}"
-			continue  # target already exists
+			if [ "${FORCE_LINK}" = 'no' ]; then
+				# don't prompt about --force-link, because this will happen a lot
+				continue  # already simlinked
+			else
+				# don't backup links that already point to the right place
+				BACKUP='no'
+			fi
+		else
+			if [ -d "${DOTFILES_SRC}/${FILE}" ] && [ -d "${TARGET}/${FILE}" ] && \
+				[ "${FORCE_DIR}" = 'no' ]; then
+				echo "use --force-dir to override the existing directory: ${TARGET}/${FILE}"
+				continue  # allow unlinked directories
+			elif [ -f "${TARGET}/${FILE}" ] && [ "${FORCE_FILE}" = 'no' ]; then
+				echo "use --force-file to override the existing target: ${TARGET}/${FILE}"
+				continue  # target already exists
+			fi
 		fi
 		link_file "${REPO}" "${FILE}" || return 1
 	done <<-EOF
