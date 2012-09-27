@@ -232,11 +232,13 @@ function wget_fetch()
 # usage: link_file REPO FILE
 #
 # Create the symbolic link to the version of FILE in the REPO
-# repository, overriding the target if it exists.
+# repository, overriding the target if it exists.  If you want to
+# override the options passed to ${LN}, set LINK_OPTS.
 function link_file()
 {
 	REPO=$(nonempty_option 'link_file' 'REPO' "${1}") || return 1
 	FILE=$(nonempty_option 'link_file' 'FILE' "${2}") || return 1
+	LINK_OPTS="${LINK_OPTS:--sv}"  # default to `-sv`
 	if [ "${BACKUP}" = 'yes' ]; then
 		if [ -e "${TARGET}/${FILE}" ] || [ -h "${TARGET}/${FILE}" ]; then
 			if [ "${DRY_RUN}" = 'yes' ]; then
@@ -256,8 +258,9 @@ function link_file()
 	if [ "${DRY_RUN}" = 'yes' ]; then
 		echo "link ${TARGET}/${FILE} to ${DOTFILES_DIR}/${REPO}/patched-src/${FILE}"
 	else
+		SOURCE="${DOTFILES_DIR}/${REPO}/patched-src/${FILE}"
 		echo -n 'link '
-		"${LN}" -rsv "${DOTFILES_DIR}/${REPO}/patched-src/${FILE}" "${TARGET}/${FILE}" || return 1
+		"${LN}" ${LINK_OPTS} "${SOURCE}" "${TARGET}/${FILE}" || return 1
 	fi
 }
 
@@ -524,7 +527,7 @@ function link_help()
 	cat <<-EOF
 
 		usage: $0 ${COMMAND} [--force] [--force-dir] [--force-file] [--force-link]
-             [--dry-run] [--no-backup] [REPO]
+		           [--dry-run] [--no-backup] [--relative] [REPO]
 
 		Where 'REPO' is the name the dotfiles repository to link.  If it
 		is not given, all repositories will be linked.
@@ -533,6 +536,9 @@ function link_help()
 		simlinks.  You can optionally overwrite any local stuff by passing
 		the --force option.  If you only want to overwrite a particular
 		type, use the more granular --force-dir, etc.
+
+		If you have coreutils 8.16 (2012-03-26) or greater, you can set
+		the --relative option to create symlinks that use relative paths.
 	EOF
 }
 
@@ -543,6 +549,7 @@ function link()
 	FORCE_LINK='no'   # If 'yes', overwrite existing symlinks.
 	DRY_RUN='no' # If 'yes', disable any actions that change the filesystem
 	BACKUP_OPT='yes'
+	LINK_OPTS='-sv'
 	while [ "${1::2}" = '--' ]; do
 		case "${1}" in
 			'--force')
@@ -564,6 +571,9 @@ function link()
 				;;
 			'--no-backup')
 				BACKUP_OPT='no'
+				;;
+			'--relative')
+				LINK_OPTS="${LINK_OPTS} --relative"
 				;;
 			*)
 				echo "ERROR: invalid option to link (${1})" >&2
