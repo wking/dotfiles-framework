@@ -3,7 +3,7 @@
 # Dotfiles management script.  For details, run
 #   $ dotfiles.sh --help
 #
-# Copyright (C) 2011-2012 W. Trevor King <wking@tremily.us>
+# Copyright (C) 2011-2013 W. Trevor King <wking@tremily.us>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
