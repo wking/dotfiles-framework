@@ -106,7 +106,7 @@ function run_on_all_repos()
 	COMMAND="${1}"
 	shift
 	if [ -z "${REPO}" ]; then  # run on all repositories
- 		for REPO in *; do
+		for REPO in *; do
 			if [ "${REPO}" = '*' ]; then
 				break  # no known repositories
 			elif [ -f "${REPO}" ]; then
@@ -414,7 +414,7 @@ function diff()
 			'--removed')
 				MODE='removed'
 				;;
- 	 		'--local-patch')
+			'--local-patch')
 				MODE='local-patch'
 				;;
 			*)
@@ -795,8 +795,8 @@ function main()
 				echo "${VERSION}"
 				return
 				;;
-	       		'--dotfiles-dir')
-       				DOTFILES_DIR="${2}"
+			'--dotfiles-dir')
+				DOTFILES_DIR="${2}"
 				shift
 				;;
 			'--target')
@@ -825,10 +825,10 @@ function main()
 			shift
 		done
 		if [ "${#}" -eq 0 ]; then
- 			run_on_all_repos "${COMMAND}" "${OPTIONS[@]}" || return 1
+			run_on_all_repos "${COMMAND}" "${OPTIONS[@]}" || return 1
 		else
 			maxargs "${0}" 1 "${@}" || return 1
-		 	"${COMMAND}" "${OPTIONS[@]}" "${1}" || return 1
+			"${COMMAND}" "${OPTIONS[@]}" "${1}" || return 1
 		fi
 	fi
 }
