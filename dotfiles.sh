@@ -376,7 +376,7 @@ function fetch()
 }
 
 ###
-# fetch command
+# diff command
 
 COMMANDS+=('diff')
 
