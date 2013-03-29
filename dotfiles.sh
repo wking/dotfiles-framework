@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION='0.2'
+VERSION='0.3'
 DOTFILES_DIR="${PWD}"
 TARGET=~
 CHECK_WGET_TYPE_AND_ENCODING='no'
