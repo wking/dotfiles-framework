@@ -26,17 +26,17 @@ CHECK_WGET_TYPE_AND_ENCODING='no'
 #####
 # External utilities
 
-DIFF=${DOTFILES_DIFF:-$(which diff)}
-GIT=${DOTFILES_GIT:-$(which git)}
-LN=${DOTFILES_LN:-$(which ln)}
-MV=${DOTFILES_MV:-$(which mv)}
-PATCH=${DOTFILES_PATCH:-$(which patch)}
-SED=${DOTFILES_SED:-$(which sed)}
-RM=${DOTFILES_RM:-$(which rm)}
-RSYNC=${DOTFILES_RSYNC:-$(which rsync)}
-TAR=${DOTFILES_TAR:-$(which tar)}
-TOUCH=${DOTFILES_TOUCH:-$(which touch)}
-WGET=${DOTFILES_WGET:-$(which wget)}
+DIFF=${DOTFILES_DIFF:-$(command -v diff)}
+GIT=${DOTFILES_GIT:-$(command -v git)}
+LN=${DOTFILES_LN:-$(command -v ln)}
+MV=${DOTFILES_MV:-$(command -v mv)}
+PATCH=${DOTFILES_PATCH:-$(command -v patch)}
+SED=${DOTFILES_SED:-$(command -v sed)}
+RM=${DOTFILES_RM:-$(command -v rm)}
+RSYNC=${DOTFILES_RSYNC:-$(command -v rsync)}
+TAR=${DOTFILES_TAR:-$(command -v tar)}
+TOUCH=${DOTFILES_TOUCH:-$(command -v touch)}
+WGET=${DOTFILES_WGET:-$(command -v wget)}
 
 #####
 # Compatibility checks
