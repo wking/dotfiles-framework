@@ -3,7 +3,7 @@
 # Dotfiles management script.  For details, run
 #   $ dotfiles.sh --help
 #
-# Copyright (C) 2011-2013 W. Trevor King <wking@tremily.us>
+# Copyright (C) 2011-2015 W. Trevor King <wking@tremily.us>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -172,6 +172,8 @@ function get_repo_source()
 		REPO_SOURCE_DATA['repo']="${REPO}"
 		if [ -d "${REPO}/.git" ]; then
 			REPO_SOURCE_DATA['transfer']='git'
+			REPO_SOURCE_DATA['url']=$(
+				git --git-dir "${REPO}/.git/" config remote.origin.url)
 		else
 			echo "ERROR: no source location found for ${REPO}" >&2
 			return 1
@@ -332,6 +334,49 @@ function clone()
 	if [ "${FETCH}" = 'yes' ]; then
 		fetch "${REPO}" || return 1
 	fi
+}
+
+###
+# list command
+
+COMMANDS+=('list')
+
+function list_help()
+{
+	echo 'List current dotfiles repositories.'
+	if [ "${1}" = '--one-line' ]; then return; fi
+
+	cat <<-EOF
+
+		usage: $0 ${COMMAND} [REPO]
+
+		List information for 'REPO' in a form simular to the 'clone'
+		command's arguments.  If 'REPO' is not give, all repositories will
+		be listed.  Examples:
+
+		  $0 list public
+		  public wget http://example.com/public-dotfiles.tar.gz
+		  $0 list
+		  public wget http://example.com/public-dotfiles.tar.gz
+		  private git ssh://example.com/~/private-dotfiles.git
+	EOF
+}
+
+function list()
+{
+	# multi-repo case handled in main() by run_on_all_repos()
+	REPO=$(nonempty_option 'list' 'REPO' "${1}") || return 1
+	maxargs 'list' 1 "${@}" || return 1
+	if [ "${BASH_MAJOR}" -ge 4 ]; then
+		get_repo_source "${REPO}" || return 1
+		TRANSFER=$(nonempty_option 'list' 'TRANSFER' "${REPO_SOURCE_DATA['transfer']}") || return 1
+		URL=$(nonempty_option 'list' 'URL' "${REPO_SOURCE_DATA['url']}") || return 1
+	else
+		echo "WARNING: Bash version < 4.0, cannot use assuming all repos use git transfer" >&2
+		TRANSFER='git'
+		URL=$(git --git-dir "${REPO}/.git/" config remote.origin.url)
+	fi
+	echo "${REPO} ${TRANSFER} ${URL}"
 }
 
 ###
