@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Dotfiles management script.  For details, run
 #   $ dotfiles.sh --help
