@@ -773,7 +773,13 @@ function update()
 {
 	LINK_OPTS=''
 	while [ "${1::2}" = '--' ]; do
-		LINK_OPTS="${LINK_FN_OPTS} ${1}"
+			case "${1}" in
+				'--ignore-timer')
+					IGNORE_TIMER='yes'
+					;;
+				*)
+					LINK_OPTS="${LINK_FN_OPTS} ${1}"
+		esac
 		shift
 	done
 	# multi-repo case handled in main() by run_on_all_repos()
@@ -840,9 +846,6 @@ function main()
 			'--version')
 				echo "${VERSION}"
 				return
-				;;
-			'--ignore-timer')
-				IGNORE_TIMER='yes'
 				;;
 			'--dotfiles-dir')
 				DOTFILES_DIR="${2}"
