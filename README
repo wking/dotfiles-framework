@@ -44,7 +44,8 @@ order to automate this, you may want to add this line to your
 Bash shell.  Since dotfiles are not expected to change rapidly, the
 ``update`` command remembers the last time it ran and only actually
 performs the update if it has been at least a week since the last
-update.
+update. To ignore this weekly timer, pass the ``--ignore-timer`` flag to
+``update``.
 
 If you're using Git, you may have a choice of transport protocols for
 accessing the central repository.  Some protocols (e.g. SSH) often

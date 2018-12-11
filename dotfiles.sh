@@ -22,6 +22,7 @@ VERSION='0.4'
 DOTFILES_DIR="${PWD}"
 TARGET=~
 CHECK_WGET_TYPE_AND_ENCODING='no'
+IGNORE_TIMER='no'
 
 #####
 # External utilities
@@ -772,7 +773,13 @@ function update()
 {
 	LINK_OPTS=''
 	while [ "${1::2}" = '--' ]; do
-		LINK_OPTS="${LINK_FN_OPTS} ${1}"
+			case "${1}" in
+				'--ignore-timer')
+					IGNORE_TIMER='yes'
+					;;
+				*)
+					LINK_OPTS="${LINK_FN_OPTS} ${1}"
+		esac
 		shift
 	done
 	# multi-repo case handled in main() by run_on_all_repos()
@@ -783,7 +790,7 @@ function update()
 	# touching this file.
 	UPDATE_FILE="${REPO}/updated.$(date +%U)"
 
-	if [ ! -e "${UPDATE_FILE}" ]; then
+	if [ ! -e "${UPDATE_FILE}" ] || [ "${IGNORE_TIMER}" = 'yes' ]; then
 		echo "update ${REPO} dotfiles"
 		"${RM}" -f "${REPO}"/updated.* || return 1
 		"${TOUCH}" "${UPDATE_FILE}" || return 1
