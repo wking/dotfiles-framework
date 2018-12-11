@@ -22,6 +22,7 @@ VERSION='0.4'
 DOTFILES_DIR="${PWD}"
 TARGET=~
 CHECK_WGET_TYPE_AND_ENCODING='no'
+IGNORE_TIMER='no'
 
 #####
 # External utilities
@@ -783,7 +784,7 @@ function update()
 	# touching this file.
 	UPDATE_FILE="${REPO}/updated.$(date +%U)"
 
-	if [ ! -e "${UPDATE_FILE}" ]; then
+	if [ ! -e "${UPDATE_FILE}" ] || [ "${IGNORE_TIMER}" = 'yes' ]; then
 		echo "update ${REPO} dotfiles"
 		"${RM}" -f "${REPO}"/updated.* || return 1
 		"${TOUCH}" "${UPDATE_FILE}" || return 1
@@ -839,6 +840,9 @@ function main()
 			'--version')
 				echo "${VERSION}"
 				return
+				;;
+			'--ignore-timer')
+				IGNORE_TIMER='yes'
 				;;
 			'--dotfiles-dir')
 				DOTFILES_DIR="${2}"
